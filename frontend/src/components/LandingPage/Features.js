@@ -11,7 +11,7 @@ const FeatureCard = ({ icon, title, body }) => (
 
 const Features = () => {
   return (
-    <section className="features">
+    <section id="features" className="features">
       <div className="features-grid">
         <FeatureCard icon="📁" title="Organize Your Notes" body="Create folders and structure your study materials for easy access and management." />
         <FeatureCard icon="⏱️" title="Track Your Activity" body="Monitor your study sessions and see your progress over time with activity logs." />

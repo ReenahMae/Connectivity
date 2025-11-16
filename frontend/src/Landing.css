@@ -89,11 +89,27 @@ body, html, #root {
   gap:12px;
   align-items:center;
 }
-.nav-link{
-  color:var(--muted);
-  margin-right:8px;
-  text-decoration:none;
+.nav-link {
+  transition: 
+    color 0.3s ease,
+    background-color 0.3s ease,
+    transform 0.25s ease;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-decoration: none;
 }
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--purple);
+  background-color: #cfc3f5;
+  transform: translateY(-3px);
+}
+
+.nav-link:active {
+  transform: translateY(0);
+}
+
 
 /* Buttons */
 .btn{
@@ -106,11 +122,13 @@ body, html, #root {
 .btn-primary{
   background: linear-gradient(90deg,var(--purple),#9b6bff);
   color:white;
+  text-decoration: none;
   font-size: 14px;
   border:none;
 }
 .btn-ghost{
   background:white;
+  text-decoration: none;
   color:#444;
   font-size: 14px;
   border:1px solid rgba(0,0,0,0.06);
@@ -274,12 +292,18 @@ body, html, #root {
 }
 .how-title{
   font-size: 40px;
-  margin-bottom: 10px;
+  background: linear-gradient(90deg, #7b46ff, #b39fe3); /* adjust colors as needed */
+  -webkit-background-clip: text;  /* for Chrome, Safari */
+  -webkit-text-fill-color: transparent; /* for Chrome, Safari */
+  background-clip: text; /* for Firefox */
+  color: transparent; /* fallback */
+  margin-top: -2rem;
 }
 .how-sub{
   color: var(--muted);
-  margin-bottom: 28px;
-  font-size: 18px;
+  margin-top: -1rem;
+  margin-bottom: 30px;
+  font-size: 22px;
 }
 .how-grid{
   display: grid;
@@ -332,8 +356,13 @@ body, html, #root {
   margin:0 auto;
   text-align:center;
 }
-.why-title{ font-size:40px; margin-bottom:10px; }
-.why-sub{ color:var(--muted); margin-bottom:28px; font-size:18px; }
+.why-title{ font-size:40px;margin-top: -5rem; margin-bottom:10px;
+  background: linear-gradient(90deg, #7b46ff, #b39fe3); /* adjust colors as needed */
+  -webkit-background-clip: text;  /* for Chrome, Safari */
+  -webkit-text-fill-color: transparent; /* for Chrome, Safari */
+  background-clip: text; /* for Firefox */
+  color: transparent; /* fallback */ }
+.why-sub{ color:var(--muted); margin-bottom:28px; font-size:22px; }
 .why-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -374,9 +403,9 @@ body, html, #root {
   text-align:center;
 }
 .cta-box{
-  background: linear-gradient(90deg, rgba(123,70,255,0.06), rgba(123,70,255,0.02));
+  background: linear-gradient(90deg, rgba(123, 70, 255, 0.152), rgba(123, 70, 255, 0.086));
   border-radius: 22px;
-  padding: 44px 36px;
+  padding: 60px 36px;
   box-shadow: 0 18px 40px rgba(35,30,50,0.06);
   backdrop-filter: blur(6px);
   border: 1px solid rgba(123,70,255,0.06);
@@ -411,6 +440,21 @@ body, html, #root {
   .cta-actions .btn{ width:100%; }
 }
 
+/* Anchor highlight used when scrolling to hash targets */
+.anchor-highlight{
+  transition: box-shadow 320ms ease, transform 320ms ease, background-color 320ms ease;
+  box-shadow: 0 18px 60px rgba(123,70,255,0.12);
+  transform: translateY(-4px);
+  border-radius: 14px;
+}
+
+@keyframes anchorPulse {
+  0% { box-shadow: 0 8px 24px rgba(123,70,255,0.06); }
+  50% { box-shadow: 0 26px 70px rgba(123,70,255,0.12); }
+  100% { box-shadow: 0 8px 24px rgba(123,70,255,0.06); }
+}
+.anchor-highlight { animation: anchorPulse 2s ease; }
+
 /* Footer */
 .footer-section{
   padding: 48px 20px 36px;
@@ -440,15 +484,17 @@ body, html, #root {
 .footer-name{
   font-weight:700;
   font-size:18px;
+  text-align: left;
 }
 .footer-desc{
   color:var(--muted);
   margin-top:6px;
+  text-align: left;
   max-width:320px;
 }
-.footer-col h4{ margin:0 0 10px 0; font-size:16px; }
+.footer-col h4{ margin:0 0 10px 0; font-size:16px; text-align: left; }
 .footer-col ul{ list-style:none; padding:0; margin:0; }
-.footer-col li{ margin:8px 0; }
+.footer-col li{ margin:8px 0; text-align: left; }
 .footer-col a{ color:var(--muted); text-decoration:none; }
 
 .footer-bottom{
@@ -473,9 +519,13 @@ body, html, #root {
 .about-title{
   font-size: 40px;
   text-align: center;
-  color: #9c7beb;
   margin-top: 10px;
   margin-bottom: 10px;
+   background: linear-gradient(90deg, #7b46ff, #b39fe3); /* adjust colors as needed */
+  -webkit-background-clip: text;  /* for Chrome, Safari */
+  -webkit-text-fill-color: transparent; /* for Chrome, Safari */
+  background-clip: text; /* for Firefox */
+  color: transparent; /* fallback */
 }
 .about-inner {
   max-width: 900px;   /* reduce width for better centering */

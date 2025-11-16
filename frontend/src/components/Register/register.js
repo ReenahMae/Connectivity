@@ -31,11 +31,12 @@ function Register() {
   return (
     <div className="auth-container">
       <div className="auth-box">
+          <button type="button" className="back-btn" onClick={() => navigate('/')} aria-label="Back to landing">✕</button>
         <div className="icon">
           <img src={bookLogo} alt="Connectivity book logo" />
         </div>
 
-        <h1>Create Account</h1>
+        <h1>Start your Learning Journey</h1>
         <p className="subtitle">
           Join Connectivity and start your learning journey
         </p>

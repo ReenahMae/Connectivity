@@ -3,7 +3,7 @@ import '../../Landing.css';
 
 export default function WhyChoose(){
   return (
-    <section className="why-section">
+    <section id="why-choose" className="why-section">
       <div className="why-inner">
         <h2 className="why-title">Why Choose Connectivity?</h2>
         <p className="why-sub">We provide everything you need to succeed academically</p>

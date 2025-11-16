@@ -5,7 +5,7 @@ import '../../Landing.css';
 
 export default function About() {
   return (
-    <section className="about-section">
+    <section id="about" className="about-section">
       <div className="about-inner">
         <h2 className="about-title">About Connectivity</h2>
         <p className="about-sub">We're on a mission to revolutionize how students learn, organize, and collaborate <br/>on their academic journey.</p>
