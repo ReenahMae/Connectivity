@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className="nav">
       <div className="nav-inner">
         <div className="logo">
-          <Logo height={150} />
+          <Logo size={250}  />
         </div>
         <div className="nav-actions">
           <Link className="nav-link" to="/login">Login</Link>

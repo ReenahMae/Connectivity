@@ -57,6 +57,7 @@ body, html, #root {
 /* Navbar */
 .nav{
   padding: 0px 40px;
+  margin-top: -3rem;
 }
 .nav-inner{
   display:flex;
