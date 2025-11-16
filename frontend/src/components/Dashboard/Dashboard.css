@@ -1,0 +1,103 @@
+/* Dashboard layout refinements */
+.dashboard-inner {
+  padding: 28px 34px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  color: #2f3237;
+}
+.note-count {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 14px;
+  color: #6a6e73;
+  font-weight: 500;
+}
+
+/* Responsive notes grid */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.note-card {
+  background-color: #fff;
+  padding: 20px 20px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow .16s, transform .16s;
+  position: relative;
+  border: 1px solid #e5e7eb;
+}
+.note-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+.note-card .note-icon {
+  font-size: 30px;
+  background-color: #f3e9ff;
+  color: #9b57ff;
+  padding: 14px 15px;
+  border-radius: 50%;
+  width: 56px;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+  align-self: flex-start;
+}
+
+.note-card h3 {
+  font-size: 18px;
+  margin: 4px 0 4px;
+  font-weight: 600;
+  color: #2f3237;
+}
+.note-body {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #4b4f56;
+  flex-grow: 1;
+}
+
+.modified {
+  color: #6a6e73;
+  font-size: 12px;
+}
+
+.new-note-btn {
+  background-color: #9b57ff;
+  color: #fff;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  transition: background .15s, box-shadow .15s, transform .15s;
+}
+.new-note-btn:hover { background-color: #8849e0; box-shadow:0 6px 14px rgba(0,0,0,0.16); transform:translateY(-1px); }
+.new-note-btn:active { transform:translateY(0); }
+
+@media (max-width: 800px) {
+  .dashboard-inner { padding: 22px 20px 50px; }
+  .notes-grid { gap: 18px; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); }
+  .dashboard-header h1 { font-size: 22px; }
+}
+ 

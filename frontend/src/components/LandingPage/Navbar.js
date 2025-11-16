@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../../Landing.css';
 import Logo from '../ui/Logo';
 
@@ -10,8 +11,8 @@ const Navbar = () => {
           <Logo height={150} />
         </div>
         <div className="nav-actions">
-          <a className="nav-link" href="#">Login</a>
-          <button className="btn btn-primary">Get Started</button>
+          <Link className="nav-link" to="/login">Login</Link>
+          <Link className="btn btn-primary" to="/register">Get Started</Link>
         </div>
       </div>
     </nav>
