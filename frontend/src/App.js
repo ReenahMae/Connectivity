@@ -24,6 +24,10 @@ function App() {
         <Hero />
         <Features />
           <About />
+        <HowItWorks />
+        <WhyChoose />
+        <CTA />
+        
 
       </main>
       <Footer />
