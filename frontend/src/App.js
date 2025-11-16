@@ -8,6 +8,7 @@ import Features from './components/LandingPage/Features';
 import About from './components/LandingPage/About';
 import Login from './components/Login/login';
 import Register from './components/Register/register';
+import Dashboard from './components/Dashboard/Dashboard';
 import HowItWorks from './components/LandingPage/HowItWorks';
 import WhyChoose from './components/LandingPage/WhyChoose';
 import CTA from './components/LandingPage/CTA';
@@ -32,7 +33,7 @@ function LandingPage() {
 
 function App() {
   const location = useLocation();
-  const hideNavbar = ['/login', '/register'].includes(location.pathname);
+  const hideNavbar = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/dashboard');
 
   // Scroll to an element when the URL contains a hash (e.g. /#why-choose)
   useEffect(() => {
@@ -63,6 +64,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </div>
   );
