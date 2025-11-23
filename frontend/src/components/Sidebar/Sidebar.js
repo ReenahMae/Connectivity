@@ -21,7 +21,9 @@ const Sidebar = ({ collapsed, onToggle }) => {
     { to: '/folders', label: 'My Folders', icon: '📁' },
     { to: '/activity-log', label: 'Activity Log', icon: '📊' },
     { to: '/shared', label: 'Shared with me', icon: '🤝' },
-    { to: '/tags', label: 'AI Tags', icon: '🏷️' }
+    { to: '/tags', label: 'AI Tags', icon: '🏷️' },
+    { to: '/settings', label: 'Settings', icon: '🏷️' }
+
   ];
 
   return (

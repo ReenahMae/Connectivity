@@ -30,6 +30,8 @@
   color:#6f2bdc;
   width:42px;
   height:42px;
+    margin-top: -1rem;
+
   border-radius: 10px;
   display:flex;
   align-items:center;
@@ -37,14 +39,15 @@
 }
 
 .sidebar-title {
-  font-weight:700;
-  font-size:18px;
+  margin-top: -1rem;
+  font-weight:600;
+  font-size:25px;
   color:#2f2f35;
 }
 
 .sidebar-nav { display:flex; flex-direction:column; gap:8px; margin-top:16px; }
-.nav-item { background:transparent; border:none; text-align:left; padding:10px; border-radius:8px; cursor:pointer; display:flex; gap:10px; align-items:center; color:#333; font-weight:600; }
-.nav-item span{ margin-left:6px; font-weight:600; }
+.nav-item { background:transparent; border:none; text-align:left; padding:10px; border-radius:8px; cursor:pointer; display:flex; gap:10px; align-items:center; color:#333; font-family: Arial, Helvetica, sans-serif; font-size:15px; }
+.nav-item span{ margin-left:6px; font-weight:500; }
 .nav-item.active { background:#f3e9ff; color:#6f2bdc; }
 
 .sidebar-bottom { margin-top:auto; display:flex; flex-direction:column; gap:14px; }

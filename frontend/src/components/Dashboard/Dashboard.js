@@ -32,6 +32,8 @@ const Dashboard = () => {
           <button className="nav-item">🕘 <span>Activity Log</span></button>
           <button className="nav-item">🔗 <span>Shared with me</span></button>
           <button className="nav-item">🏷️ <span>AI Tags</span></button>
+          <button className="nav-item" onClick={() => navigate('/settings')} aria-label="Settings">🏷️ <span>Settings</span></button>
+
         </nav>
 
         <div className="sidebar-bottom">
