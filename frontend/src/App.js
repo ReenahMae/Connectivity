@@ -14,6 +14,8 @@ import HowItWorks from './components/LandingPage/HowItWorks';
 import WhyChoose from './components/LandingPage/WhyChoose';
 import CTA from './components/LandingPage/CTA';
 import Footer from './components/LandingPage/Footer';
+import ViewNote from './components/Notes/ViewNote';
+import EditNote from './components/Notes/EditNote';
 
 // Simple landing wrapper used as the home route
 function LandingPage() {
@@ -34,7 +36,11 @@ function LandingPage() {
 
 function App() {
   const location = useLocation();
-  const hideNavbar = ['/login', '/register', '/settings'].includes(location.pathname) || location.pathname.startsWith('/dashboard');
+  const hideNavbar =
+  ['/login', '/register', '/settings'].includes(location.pathname) ||
+  location.pathname.startsWith('/dashboard') ||
+  location.pathname.startsWith('/note/');
+
 
   // Scroll to an element when the URL contains a hash (e.g. /#why-choose)
   useEffect(() => {
@@ -67,6 +73,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/note/:id" element={<ViewNote />} />
+        <Route path="/note/:id/edit" element={<EditNote />} />
+
       </Routes>
     </div>
   );

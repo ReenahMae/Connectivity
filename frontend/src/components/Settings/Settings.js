@@ -15,7 +15,7 @@ const Settings = () => {
         </div>
 
         <nav className="sidebar-nav">
-          <button className="nav-item">📄 <span>My Notes</span></button>
+          <button className="nav-item" onClick={() => navigate('/dashboard')} aria-label="My Notes">📄 <span>My Notes</span></button>
           <button className="nav-item">📁 <span>My Folders</span></button>
           <button className="nav-item">🕘 <span>Activity Log</span></button>
           <button className="nav-item">🔗 <span>Shared with me</span></button>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';  // Import Link for navigation and logout redirect
-import '../Sidebar.css';
+import './Sidebar.css';
 
 const Sidebar = ({ collapsed, onToggle }) => {
   const navigate = useNavigate();
