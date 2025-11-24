@@ -2,6 +2,7 @@ package com.appdevg4.phishers.config;
 
 import com.appdevg4.phishers.util.JwtUtil;
 import jakarta.servlet.FilterChain;
+import java.util.Collections;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
