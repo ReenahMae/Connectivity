@@ -6,7 +6,8 @@ import bookLogo from '../../assets/book_lg.jpg';
 function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: ""
@@ -24,7 +25,12 @@ function Register() {
       return;
     }
 
-    localStorage.setItem("user", JSON.stringify(form));
+    const userToSave = {
+      ...form,
+      fullName: `${form.firstName} ${form.lastName}`.trim()
+    };
+
+    localStorage.setItem("user", JSON.stringify(userToSave));
     navigate("/login");
   };
 
@@ -42,12 +48,22 @@ function Register() {
         </p>
 
         <form onSubmit={handleSubmit}>
-          <label>Full Name</label>
+          <label>First Name</label>
           <input
             type="text"
-            name="fullName"
-            placeholder="John Doe"
-            value={form.fullName}
+            name="firstName"
+            placeholder="John"
+            value={form.firstName}
+            onChange={handleChange}
+            required
+          />
+
+          <label>Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Doe"
+            value={form.lastName}
             onChange={handleChange}
             required
           />
