@@ -3,27 +3,44 @@ import { useNavigate, Link } from "react-router-dom";
 import "./login.css";
 import bookLogo from '../../assets/book_lg.jpg';
 
-
-
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // <-- added error state
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // <-- added async
     e.preventDefault();
 
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-    if (!savedUser) {
-      alert("No user found. Please sign up first.");
-      return;
-    }
+    try {
+      // Call backend login endpoint
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
 
-    if (email === savedUser.email && password === savedUser.password) {
-      localStorage.setItem("session", "true");
+      if (!response.ok) {
+        setError("Invalid Credentials");
+        return;
+      }
+
+      const data = await response.json();
+
+      // Save JWT token in localStorage
+      localStorage.setItem("token", data.data.token); 
+      localStorage.setItem("user", JSON.stringify({
+        fname: data.data.fname,
+        lname: data.data.lname,
+        email: data.data.email
+      }));
+
+      // Redirect to dashboard
       navigate("/dashboard");
-    } else {
-      alert("Invalid email or password!");
+
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong");
     }
   };
 
@@ -42,7 +59,7 @@ function Login() {
           <label>Email</label>
           <input
             type="email"
-            placeholder="student@university.edu"
+            placeholder="sample@gmail.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -60,6 +77,8 @@ function Login() {
           <button type="submit" className="submit-btn">
             Login
           </button>
+
+          {error && <p style={{ color: "red" }}>{error}</p>} {/* display error */}
         </form>
 
         <p className="switch-text">

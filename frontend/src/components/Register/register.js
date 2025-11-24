@@ -17,7 +17,7 @@ function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -25,13 +25,32 @@ function Register() {
       return;
     }
 
-    const userToSave = {
-      ...form,
-      fullName: `${form.firstName} ${form.lastName}`.trim()
-    };
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fname: form.firstName,
+          lname: form.lastName,
+          email: form.email,
+          password: form.password,
+        }),
+      });
 
-    localStorage.setItem("user", JSON.stringify(userToSave));
-    navigate("/login");
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Registration successful!");
+        navigate("/login");
+      } else {
+        alert(result.message || "Error creating account");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Something went wrong. Make sure backend is running.");
+    }
   };
 
   return (
