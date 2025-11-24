@@ -1,4 +1,4 @@
-package com.connectivity.connectivity_backend.Entity;
+package com.appdevg4.phishers.Entity;
 import jakarta.persistence.*;
 
 @Entity
