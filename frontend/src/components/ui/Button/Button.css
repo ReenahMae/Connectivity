@@ -1,0 +1,46 @@
+/* Base button styling */
+.btn {
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s ease;
+  font-family: inherit;
+}
+
+/* Primary (Save Changes, Change Password) */
+.btn-primary {
+  background: linear-gradient(180deg, var(--accent), #7d3fe6);
+  color: white;
+}
+
+/* Secondary / Outline (Change Photo) */
+.btn-outline {
+  background: var(--card);
+  border: 1px solid #ebe6f7;
+  color: #26272b;
+}
+
+.btn-outline:hover {
+  background: #f7f4ff;
+}
+
+/* Danger (Delete Account) */
+.btn-danger {
+  background: #e03131;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c92a2a;
+}
+
+/* Ghost (Back arrow button) */
+.btn-ghost {
+  background: transparent;
+  color: #2f2f35;
+  border: none;
+  padding: 6px 10px;
+  font-size: 22px;
+}

@@ -20,6 +20,12 @@
   align-items:center;
   margin-bottom:18px;
 }
+
+.settings-title-wrap {
+  text-align: center;
+  width: 100%;
+}
+
 .back-btn{ background:transparent; border:none; font-size:22px; cursor:pointer; padding:6px 10px; color:#2f2f35; }
 .settings-title-wrap{ display:flex; flex-direction:column; }
 .settings-title{ margin:0; font-size:28px; font-weight:700; }
@@ -58,4 +64,201 @@
   .settings-page{ padding:20px; }
   .form-grid{ grid-template-columns:1fr; }
   .avatar{ width:72px; height:72px; }
+}
+
+/* SECURITY */
+.security-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 32px;
+  margin-top: 30px;
+  box-shadow: 0 6px 18px rgba(23,16,44,0.03);
+  border: 1px solid #f0edf6;
+}
+
+.sec-title {
+  margin: 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sec-sub {
+  text-align: center;
+  margin-top: 6px;
+  margin-bottom: 26px;
+  color: var(--muted);
+}
+
+.change-pass-btn {
+  background: #ffffff;
+  border: 1px solid #dcd7f3;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.change-pass-btn:hover {
+  background: #f7f4ff;
+}
+
+.security-card {
+  background: var(--card);
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(23,16,44,0.03);
+  border: 1px solid #f0edf6;
+  margin-top: 32px;
+}
+
+.security-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.security-sub {
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.security-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.security-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.security-field input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #f0edf6;
+  background: #faf8fb;
+}
+
+.change-password-btn {
+  margin-top: 24px;
+  background: var(--accent);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* PREFERENCES */
+.preferences-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 32px;
+  margin-top: 36px;
+  box-shadow: 0 6px 18px rgba(23,16,44,0.03);
+  border: 1px solid #f0edf6;
+}
+
+.pref-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #f2eef8;
+}
+
+.pref-item:last-child {
+  border-bottom: none;
+}
+
+.pref-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.pref-desc {
+  color: #8b8f95;
+  font-size: 13px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background: #ccc;
+  border-radius: 24px;
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background: var(--accent-2);
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Danger Zone */
+.danger-zone {
+  background: #fff5f5;
+  border: 1px solid #ffd6d6;
+  padding: 32px;
+  border-radius: 12px;
+  margin-top: 32px;
+}
+
+.danger-zone-title {
+  color: #d64545;
+  font-size: 25px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.danger-zone-sub {
+  color: #e07a7a;
+  margin-bottom: 22px;
+}
+
+
+.delete-account-btn {
+  background: #e03131;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  width: 180px;
+}
+
+.delete-account-btn:hover {
+  background: #c92a2a;
 }

@@ -2,6 +2,8 @@ import React from 'react';
 import './Settings.css';
 import '../Dashboard/Dashboard.css';
 import { useNavigate } from 'react-router-dom';
+import Button from "../../components/ui/Button/Button";
+
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ const Settings = () => {
       <main className="dashboard-inner content">
         <div className="settings-page">
           <header className="settings-header">
-            <button className="back-btn" onClick={() => navigate(-1)} aria-label="Back">←</button>
+            {/* <button className="back-btn" onClick={() => navigate(-1)} aria-label="Back">←</button> */}
             <div className="settings-title-wrap">
               <h2 className="settings-title">Settings</h2>
               <div className="settings-sub">Manage your account and view analytics</div>
@@ -63,10 +65,10 @@ const Settings = () => {
               <div className="profile-top">
                 <div className="avatar">JS</div>
                 <div className="photo-actions">
-                  <button className="change-photo">
+                  <Button variant="outline">
                     <span className="camera-icon">📷</span>
-                    Change Photo
-                  </button>
+                      Change Photo
+                </Button>
                   <div className="photo-note">JPG, PNG or GIF. Max 2MB</div>
                 </div>
               </div>
@@ -90,9 +92,73 @@ const Settings = () => {
               </div>
 
               <div className="form-actions">
-                <button className="save-btn">Save Changes</button>
+                <Button variant="primary">Save Changes</Button>
               </div>
             </section>
+            {/* SECURITY SECTION */}
+<section className="security-card">
+  <h3 className="security-title">Security</h3>
+  <div className="security-sub">Manage your password and security settings</div>
+
+  <div className="security-field">
+    <label>Current Password</label>
+    <input placeholder="Enter current password" type="password" />
+  </div>
+
+  <div className="security-grid">
+    <div className="security-field">
+      <label>New Password</label>
+      <input placeholder="Enter new password" type="password" />
+    </div>
+
+    <div className="security-field">
+      <label>Confirm Password</label>
+      <input placeholder="Confirm new password" type="password" />
+    </div>
+  </div>
+
+  <Button variant="primary">Change Password</Button>
+
+</section>
+
+
+
+{/* PREFERENCES SECTION */}
+<section className="preferences-card">
+  <h3 className="sec-title">Preferences</h3>
+  <div className="sec-sub">Customize your experience</div>
+
+  <div className="pref-item">
+    <div>
+      <div className="pref-title">🔔 Email Notifications</div>
+      <div className="pref-desc">Receive updates about your notes</div>
+    </div>
+    <label className="switch">
+      <input type="checkbox" defaultChecked />
+      <span className="slider"></span>
+    </label>
+  </div>
+
+  <div className="pref-item">
+    <div>
+      <div className="pref-title">🌓 Dark Mode</div>
+      <div className="pref-desc">Switch to dark theme</div>
+    </div>
+    <label className="switch">
+      <input type="checkbox" />
+      <span className="slider"></span>
+    </label>
+  </div>
+</section>
+
+
+{/* DANGER ZONE */}
+<section className="danger-zone">
+  <h3 className="danger-zone-title">Danger Zone</h3>
+  <div className="danger-zone-sub">Irreversible actions</div>
+  <Button variant="danger">🗑 Delete Account</Button>
+</section>
+
           </div>
         </div>
       </main>
