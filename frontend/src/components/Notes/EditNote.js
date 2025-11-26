@@ -2,56 +2,70 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../Dashboard/Dashboard.css";
 import "./Notes.css";
+import { getNote, updateNote, deleteNoteApi } from "../../api/NotesApi";
+
 
 const EditNote = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const loadNotes = () => JSON.parse(localStorage.getItem("notes") || "[]");
-
-  const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const n = loadNotes();
-    setNotes(n);
+useEffect(() => {
+  const u = JSON.parse(localStorage.getItem("user"));
+  if (!u) return navigate("/login");
 
-    const entry = n.find((e) => String(e.id) === String(id));
-    if (!entry) return navigate("/dashboard");
+  setUser(u);
 
-    setTitle(entry.title || "");
-    setBody(entry.body || "");
-  }, [id, navigate]);
+  getNote(id, u.id)
+    .then(noteData => {
+      setTitle(noteData.title || "");
+      setBody(noteData.body || "");
+    })
+    .catch(err => {
+      console.error("Failed to load note:", err);
+      // ❗ Do NOT redirect here
+    });
+}, [id, navigate]);
+
+
 
   const handleLogout = () => {
     localStorage.removeItem("session");
     navigate("/login");
   };
 
-  const saveNote = () => {
-    const updated = notes.map((n) =>
-      String(n.id) === String(id)
-        ? {
-            ...n,
-            title: title || "Untitled Note",
-            body,
-            modified: new Date().toLocaleString(),
-          }
-        : n
-    );
+const saveNote = async () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user?.id || user?.userId;
+  if (!userId) { alert('Please login again (missing user id)'); return; }
 
-    localStorage.setItem("notes", JSON.stringify(updated));
+  try {
+    await updateNote(id, { title, body }, userId);
     navigate(`/note/${id}`);
-  };
+  } catch (err) {
+    console.error('Save failed:', err);
+    alert('Failed to save note.');
+  }
+};
 
-  const deleteNote = () => {
-    if (!window.confirm("Delete this note?")) return;
 
-    const remaining = notes.filter((n) => String(n.id) !== String(id));
-    localStorage.setItem("notes", JSON.stringify(remaining));
-    navigate("/dashboard");
-  };
+
+
+
+const deleteNote = () => {
+  if (!window.confirm("Delete this note?")) return;
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  deleteNoteApi(id, user.id)
+    .then(() => navigate("/dashboard"))
+    .catch(err => console.error("Delete failed:", err));
+};
+
+
 
   return (
     <div className="dashboard-layout">

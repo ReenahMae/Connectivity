@@ -1,14 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import "../Dashboard/Dashboard.css";
 import "./Notes.css";
+import { getNote, deleteNoteApi } from "../../api/NotesApi";
 
 const ViewNote = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const notes = JSON.parse(localStorage.getItem("notes") || "[]");
-  const note = notes.find((n) => String(n.id) === String(id));
+  const [note, setNote] = useState(null);
+
+  useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return navigate("/login");
+
+  getNote(id, user.id)
+    .then(note => setNote(note))
+    .catch(() => navigate("/dashboard"));
+}, [id, navigate]);
+
+
 
   const handleLogout = () => {
     localStorage.removeItem("session");
@@ -52,12 +63,22 @@ const ViewNote = () => {
     );
   }
 
-  const handleDelete = () => {
-    if (!window.confirm("Delete this note?")) return;
-    const updated = notes.filter((n) => String(n.id) !== String(id));
-    localStorage.setItem("notes", JSON.stringify(updated));
-    navigate("/dashboard");
-  };
+const handleDelete = async () => {
+  if (!window.confirm('Delete this note?')) return;
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user?.id || user?.userId;
+  if (!userId) { alert('Please login again (missing user id)'); return; }
+
+  try {
+    await deleteNoteApi(id, userId);
+    navigate('/dashboard');
+  } catch (err) {
+    console.error('Delete failed:', err);
+    alert('Failed to delete note.');
+  }
+};
+
+
 
   return (
     <div className="dashboard-layout">

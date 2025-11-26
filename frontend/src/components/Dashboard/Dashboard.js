@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
+import { getNotes, createNote } from "../../api/NotesApi";
+import { deleteNoteApi } from "../../api/NotesApi";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -22,26 +24,36 @@ const Dashboard = () => {
   }, [navigate]);
 
   // --- NOTES STATE ---
-  const [notes, setNotes] = useState(() => {
-    const saved = localStorage.getItem("notes");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [notes, setNotes] = useState([]);
 
-  useEffect(() => {
-    localStorage.setItem("notes", JSON.stringify(notes));
-  }, [notes]);
+
+useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return;
+
+  getNotes(user.id)
+    .then(setNotes)
+    .catch(err => console.error("Error loading notes:", err));
+}, []);
+
+
 
   // --- ADD NEW NOTE ---
-  const addNewNote = () => {
-    const newNote = {
-      id: Date.now(),
-      title: "",
-      body: "",
-      modified: "just now"
-    };
-    setNotes([newNote, ...notes]);
-    navigate(`/note/${newNote.id}/edit`);
-  };
+const addNewNote = async () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user?.id || user?.userId;
+  if (!userId) { alert('Please login again (missing user id)'); return; }
+
+  try {
+    const saved = await createNote({ userId, title: "", body: "" });
+    // your createNote should return saved note object
+    navigate(`/note/${saved.id}/edit`);
+  } catch (err) {
+    console.error("Error creating note:", err);
+    alert("Failed to create note.");
+  }
+};
+
 
   // --- LOGOUT ---
   const handleLogout = () => {
@@ -54,12 +66,21 @@ const Dashboard = () => {
   // --- NOTE MENU ---
   const [openMenuId, setOpenMenuId] = useState(null);
 
-  const handleDeleteCard = (id) => {
-    if (!window.confirm("Delete this note?")) return;
-    const remaining = notes.filter((n) => String(n.id) !== String(id));
-    setNotes(remaining);
-    setOpenMenuId(null);
-  };
+
+
+const handleDeleteCard = (id) => {
+  if (!window.confirm("Delete this note?")) return;
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  deleteNoteApi(id, user.id)
+    .then(() => {
+      setNotes(notes.filter(n => n.id !== id));
+      setOpenMenuId(null);
+    })
+    .catch(err => console.error("Delete failed:", err));
+};
+
 
   return (
     <div className="dashboard-layout">

@@ -9,40 +9,50 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // <-- added error state
 
-  const handleSubmit = async (e) => { // <-- added async
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      // Call backend login endpoint
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+  try {
+    const response = await fetch("http://localhost:8080/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-      if (!response.ok) {
-        setError("Invalid Credentials");
-        return;
-      }
-
-      const data = await response.json();
-
-      // Save JWT token in localStorage
-      localStorage.setItem("token", data.data.token); 
-      localStorage.setItem("user", JSON.stringify({
-        fname: data.data.fname,
-        lname: data.data.lname,
-        email: data.data.email
-      }));
-
-      // Redirect to dashboard
-      navigate("/dashboard");
-
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong");
+    if (!response.ok) {
+      setError("Invalid Credentials");
+      return;
     }
-  };
+
+    const res = await response.json(); // <-- you forgot this!
+    const data = res.data;             // backend returns { message, data: {...} }
+
+    // Make sure token and id exist
+    if (!data || !data.token) {
+      setError("Login failed: No token received.");
+      return;
+    }
+
+    // Save token + user
+    localStorage.setItem("token", data.token);
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        id: data.id,
+        fname: data.fname,
+        lname: data.lname,
+        email: data.email
+      })
+    );
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong");
+  }
+};
+
 
   return (
     <div className="auth-container">

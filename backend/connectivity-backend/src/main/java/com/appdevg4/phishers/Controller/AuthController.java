@@ -61,6 +61,7 @@ public ResponseEntity<ApiResponse<Map<String, String>>> loginUser(@RequestBody M
 
         // Prepare response data
         Map<String, String> data = Map.of(
+            "id", user.getId().toString(),
             "fname", user.getFname(),
             "lname", user.getLname(),
             "email", user.getEmail(),
