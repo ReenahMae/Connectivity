@@ -36,3 +36,58 @@
     transform: rotate(360deg);
   }
 }
+
+/* GENERAL */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode button {
+  background-color: #333;
+  color: #fff;
+}
+
+/* SIDEBAR */
+body.dark-mode .sidebar {
+  background-color: #1f1f1f;
+  border-right: 1px solid #333;
+}
+
+body.dark-mode .sidebar .nav-item {
+  color: #ccc;
+}
+
+body.dark-mode .sidebar .nav-item.active {
+  background-color: #3b2f5f;
+  color: #fff;
+}
+
+/* NOTES */
+body.dark-mode .note-card {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+/* DASHBOARD */
+body.dark-mode .dashboard-layout {
+  background-color: #121212;
+}
+
+/* PREFERENCES / SETTINGS CARDS */
+body.dark-mode .profile-card,
+body.dark-mode .security-card,
+body.dark-mode .preferences-card {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+}

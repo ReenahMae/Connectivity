@@ -1,3 +1,31 @@
+:root{
+  --bg: #ffffff;
+  --text: #111827;
+  --heading: #0f1724;
+  --muted: #6b7280;
+  --card: #ffffff;
+  --accent: #2563eb;
+  --switch-on: #9b57ff; /* purple switch */
+  --pill-bg: #f6f1fb;
+  --border: #e6e9ee;
+  --danger: #e03131;
+  --danger-hover: #c92a2a;
+}
+
+.dark-mode{
+  --bg: #071124;
+  --text: #ffffff;
+  --heading: #ffffff;
+  --muted: #9aa6b2;
+  --card: #0f1724;
+  --accent: #60a5fa;
+  --pill-bg: rgba(255,255,255,0.03);
+  --border: #17232b;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --switch-on: #a17bff; /* slightly lighter purple in dark */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,6 +33,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 code {

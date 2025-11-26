@@ -28,12 +28,12 @@
 
 /* Danger (Delete Account) */
 .btn-danger {
-  background: #e03131;
+  background: var(--danger);
   color: white;
 }
 
 .btn-danger:hover {
-  background: #c92a2a;
+  background: var(--danger-hover);
 }
 
 /* Ghost (Back arrow button) */
