@@ -34,12 +34,20 @@
 .profile-header h3{ margin:0; font-size:20px; color:var(--heading); }
 .profile-sub{ color:var(--muted); margin-top:8px; }
 
-.profile-top{ display:flex; gap:20px; align-items:center; margin:20px 0; }
-.avatar{ width:88px; height:88px; border-radius:50%; background: linear-gradient(135deg,#8a5bff,#cf76ff); color:#fff; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:700; }
-.photo-actions{ display:flex; flex-direction:column; gap:10px; }
-.change-photo{ background:var(--card); border:1px solid var(--border); padding:10px 14px; border-radius:10px; cursor:pointer; display:inline-flex; gap:8px; align-items:center; }
-.camera-icon{ font-size:14px; }
-.photo-note{ color:#9b9ea3; font-size:13px; }
+.profile-top{ display:flex; gap:20px; align-items:center; margin:8px 0 18px; }
+.avatar{ width:112px; height:112px; border-radius:50%; background: linear-gradient(135deg,#8a5bff,#cf76ff); color:#fff; display:flex; align-items:center; justify-content:center; font-size:36px; font-weight:700; overflow:hidden; }
+.avatar img{ display:block; width:100%; height:100%; object-fit:cover; }
+.avatar-initials{ font-size:34px; font-weight:700; color:white; }
+.photo-actions{ display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
+.photo-main{ display:flex; }
+.change-photo{ background:#fff; border:1px solid rgba(15,23,42,0.06); padding:10px 18px; border-radius:12px; cursor:pointer; display:inline-flex; gap:12px; align-items:center; box-shadow: 0 1px 2px rgba(16,24,40,0.04); font-weight:600; }
+.change-photo.large{ padding:12px 20px; font-size:15px; }
+.change-photo:hover{ box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
+.change-photo .camera-icon{ display:inline-flex; width:28px; height:28px; align-items:center; justify-content:center; border-radius:8px; border:1px solid rgba(15,23,42,0.06); background:transparent; font-size:14px; }
+.photo-secondary{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+.small-photo-btn{ background:#fff; border:1px solid rgba(15,23,42,0.06); padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:600; }
+.small-photo-btn:hover{ box-shadow: 0 6px 18px rgba(16,24,40,0.04); }
+.photo-note{ color:var(--muted); font-size:13px; margin-top:6px; }
 
 .divider{ height:1px; background:var(--border); margin:18px 0; }
 

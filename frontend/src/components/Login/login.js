@@ -24,17 +24,21 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    const res = await response.json(); // <-- you forgot this!
-    const data = res.data;             // backend returns { message, data: {...} }
+    const res = await response.json();   // parse JSON
+    const data = res.data;               // get the actual user object
 
-    // Make sure token and id exist
     if (!data || !data.token) {
       setError("Login failed: No token received.");
       return;
     }
 
-    // Save token + user
+    // Save JWT token
     localStorage.setItem("token", data.token);
+
+    // Save userId separately for API calls
+    localStorage.setItem("userId", data.id);
+
+    // Save user info (for sidebar, initials, etc.)
     localStorage.setItem(
       "user",
       JSON.stringify({
@@ -45,14 +49,13 @@ const handleSubmit = async (e) => {
       })
     );
 
-    navigate("/dashboard");
+    navigate("/dashboard");  // redirect after login
 
   } catch (err) {
     console.error(err);
     setError("Something went wrong");
   }
 };
-
 
   return (
     <div className="auth-container">
