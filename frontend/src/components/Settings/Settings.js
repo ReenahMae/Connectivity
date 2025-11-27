@@ -1,14 +1,32 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import './Settings.css';
 import '../Dashboard/Dashboard.css';
 import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button/Button';
+import ProfileSettings from './ProfileSettings';
 import { ThemeContext } from '../../context/ThemeContext';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
   const [activeTab, setActiveTab] = useState('profile');
+
+  // Sidebar reads user info from localStorage and listens for updates
+  const [storedUser, setStoredUser] = useState(() => JSON.parse(localStorage.getItem('user') || '{}'));
+
+  useEffect(() => {
+    const handler = () => setStoredUser(JSON.parse(localStorage.getItem('user') || '{}'));
+    window.addEventListener('userUpdated', handler);
+    return () => window.removeEventListener('userUpdated', handler);
+  }, []);
+
+  // Logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   return (
     <div className="dashboard-layout">
@@ -27,15 +45,15 @@ const Settings = () => {
           <button className="nav-item" onClick={() => navigate('/settings')}>⚙️ <span>Settings</span></button>
         </nav>
 
-        <div className="sidebar-bottom">
+          <div className="sidebar-bottom">
           <div className="user-pill">
-            <div className="user-initials">JS</div>
+            <div className="user-initials">{(storedUser.fname?.[0] || '') + (storedUser.lname?.[0] || '')}</div>
             <div className="user-info">
-              <div className="user-name">John Student</div>
-              <div className="user-email">john@university.edu</div>
+              <div className="user-name">{storedUser.fname || ''} {storedUser.lname || ''}</div>
+              <div className="user-email">{storedUser.email || ''}</div>
             </div>
           </div>
-          <button className="logout-btn" onClick={() => { localStorage.removeItem('session'); navigate('/login'); }}>Logout</button>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </aside>
 
@@ -58,71 +76,7 @@ const Settings = () => {
           <div className="settings-main">
             {activeTab === 'profile' ? (
               <>
-                {/* PROFILE SECTION */}
-                <section className="profile-card">
-                  <div className="profile-header">
-                    <h3>Profile Information</h3>
-                    <div className="profile-sub">Update your personal information</div>
-                  </div>
-
-                  <div className="profile-top">
-                    <div className="avatar">JS</div>
-                    <div className="photo-actions">
-                      <Button variant="outline">
-                        <span className="camera-icon">📷</span>
-                        Change Photo
-                      </Button>
-                      <div className="photo-note">JPG, PNG or GIF. Max 2MB</div>
-                    </div>
-                  </div>
-
-                  <div className="divider" />
-
-                  <div className="form-grid">
-                    <div className="field">
-                      <label>First Name</label>
-                      <input defaultValue="John" />
-                    </div>
-                    <div className="field">
-                      <label>Last Name</label>
-                      <input defaultValue="Student" />
-                    </div>
-                  </div>
-
-                  <div className="field">
-                    <label>Email Address</label>
-                    <input defaultValue="john@university.edu" />
-                  </div>
-
-                  <div className="form-actions">
-                    <Button variant="primary">Save Changes</Button>
-                  </div>
-                </section>
-
-                {/* SECURITY SECTION */}
-                <section className="security-card">
-                  <h3 className="security-title">Security</h3>
-                  <div className="security-sub">Manage your password and security settings</div>
-
-                  <div className="security-field">
-                    <label>Current Password</label>
-                    <input placeholder="Enter current password" type="password" />
-                  </div>
-
-                  <div className="security-grid">
-                    <div className="security-field">
-                      <label>New Password</label>
-                      <input placeholder="Enter new password" type="password" />
-                    </div>
-
-                    <div className="security-field">
-                      <label>Confirm Password</label>
-                      <input placeholder="Confirm new password" type="password" />
-                    </div>
-                  </div>
-
-                  <Button variant="primary">Change Password</Button>
-                </section>
+                <ProfileSettings />
 
                 {/* PREFERENCES */}
                 <section className="preferences-card">
