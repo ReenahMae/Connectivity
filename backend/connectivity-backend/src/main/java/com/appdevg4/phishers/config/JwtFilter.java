@@ -24,40 +24,38 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+protected void doFilterInternal(HttpServletRequest request,
+                                HttpServletResponse response,
+                                FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-if (path.startsWith("/api/auth") || path.startsWith("/api/notes")) {
-    filterChain.doFilter(request, response);
-    return;
-}
-        // Skip login and register
-        if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+    String path = request.getRequestURI();
 
-        String authHeader = request.getHeader("Authorization");
+    // Skip public endpoints
+    if (path.startsWith("/api/auth") || path.startsWith("/api/notes") || path.startsWith("/api/profile")) {
+        filterChain.doFilter(request, response);
+        return;
+    }
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            if (jwtUtil.validateToken(token)) {
-                String username = jwtUtil.extractUsername(token);
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+    // JWT validation for all other requests
+    String authHeader = request.getHeader("Authorization");
+
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        String token = authHeader.substring(7);
+        if (jwtUtil.validateToken(token)) {
+            String username = jwtUtil.extractUsername(token);
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
-        filterChain.doFilter(request, response);
+    } else {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return;
     }
+
+    filterChain.doFilter(request, response);
+}
 }
 
