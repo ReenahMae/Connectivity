@@ -2,6 +2,7 @@ package com.appdevg4.phishers.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class ActivityLogService {
     }
 
      public ActivityLogEntity saveActivityLog(ActivityLogEntity activityLog){
+        activityLog.setTimestamp(LocalDateTime.now());
         return actlogrepo.save(activityLog);
     }
 

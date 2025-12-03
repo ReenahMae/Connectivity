@@ -26,6 +26,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                 .requestMatchers("/api/notes/**").permitAll()
                 .requestMatchers("/api/profile/**").permitAll()
+                .requestMatchers("/api/folders/**").permitAll()
+                .requestMatchers("/api/activity/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .formLogin().disable()

@@ -1,0 +1,15 @@
+/* Reuse your Dashboard.css styles or import them */
+@import '../../components/Dashboard/Dashboard.css';
+
+.folder-input {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.folder-input:focus {
+  outline: none;
+  border-color: #007bff;
+}

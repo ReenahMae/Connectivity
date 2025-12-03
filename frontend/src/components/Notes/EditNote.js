@@ -78,8 +78,8 @@ const deleteNote = () => {
 
         <nav className="sidebar-nav">
           <button className="nav-item active">📄 <span>My Notes</span></button>
-          <button className="nav-item">📁 <span>My Folders</span></button>
-          <button className="nav-item">🕘 <span>Activity Log</span></button>
+          <button className="nav-item" onClick={() => navigate("/folders")}>📁 <span>My Folders</span></button>
+          <button className="nav-item" onClick={() => navigate("/activity")}>🕘 <span>Activity Log</span></button>
           <button className="nav-item">🔗 <span>Shared with me</span></button>
           <button className="nav-item">🏷️ <span>AI Tags</span></button>
           <button className="nav-item" onClick={() => navigate('/settings')}>🏷️ <span>Settings</span></button>
