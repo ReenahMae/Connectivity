@@ -16,6 +16,9 @@ import CTA from './components/LandingPage/CTA';
 import Footer from './components/LandingPage/Footer';
 import ViewNote from './components/Notes/ViewNote';
 import EditNote from './components/Notes/EditNote';
+import Folders from './pages/Folders/Folders';
+import FolderView from './pages/Folders/FolderView';
+import ActivityLog from './pages/ActivityLog/ActivityLog';
 
 // Simple landing wrapper used as the home route
 function LandingPage() {
@@ -37,10 +40,10 @@ function LandingPage() {
 function App() {
   const location = useLocation();
   const hideNavbar =
-  ['/login', '/register', '/settings'].includes(location.pathname) ||
+  ['/login', '/register', '/settings', '/folders','/activity'].includes(location.pathname) ||
   location.pathname.startsWith('/dashboard') ||
-  location.pathname.startsWith('/note/');
-
+  location.pathname.startsWith('/note/') ||
+  location.pathname.startsWith('/folder/');
 
   // Scroll to an element when the URL contains a hash (e.g. /#why-choose)
   useEffect(() => {
@@ -72,12 +75,17 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/folders" element={<Folders />} />
+        <Route path="/folder/:folderId" element={<FolderView />} />
+        <Route path="/activity" element={<ActivityLog />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/note/:id" element={<ViewNote />} />
         <Route path="/note/:id/edit" element={<EditNote />} />
 
       </Routes>
     </div>
+
+    
   );
 }
 

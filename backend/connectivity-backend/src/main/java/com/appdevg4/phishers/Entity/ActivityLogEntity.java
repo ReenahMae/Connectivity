@@ -1,6 +1,7 @@
 package com.appdevg4.phishers.Entity;
 
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +24,7 @@ public class ActivityLogEntity {
     private String activityType;
 
     @Column(name="timestamp")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime timestamp;
 
     public ActivityLogEntity(){

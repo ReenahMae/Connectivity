@@ -26,6 +26,11 @@ public class FolderService {
         return folderrepo.findAll();
     }
 
+    public FolderEntity getFolderById(int folder_id){
+        return folderrepo.findById(folder_id)
+        .orElseThrow(() -> new NoSuchElementException("Folder" + folder_id + "does not exist!"));
+    }
+
     public FolderEntity updateFolder(int folder_id, FolderEntity newFolder){
         FolderEntity folder = new FolderEntity();
 
@@ -33,7 +38,6 @@ public class FolderService {
             folder = folderrepo.findById(folder_id).get();
 
         folder.setFolderName(newFolder.getFolderName());
-        folder.setDateCreated(newFolder.getDateCreated());
         } catch(NoSuchElementException ex){
             throw new NoSuchElementException("Folder " + folder_id + " does not exist!");
         }
