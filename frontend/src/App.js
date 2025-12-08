@@ -19,6 +19,7 @@ import Folders from './pages/Folders/Folders';
 import FolderView from './pages/Folders/FolderView';
 import ActivityLog from './pages/ActivityLog/ActivityLog';
 import AllNotes from './components/Notes/AllNotes';
+import StudyTimer from './components/StudyTimer/StudyTimer';
 
 // Simple landing wrapper used as the home route
 function LandingPage() {
@@ -40,7 +41,7 @@ function LandingPage() {
 function App() {
   const location = useLocation();
   const hideNavbar =
-  ['/login', '/register', '/settings', '/folders','/activity','/notes'].includes(location.pathname) ||
+  ['/login', '/register', '/settings', '/folders','/activity','/notes', '/timer',].includes(location.pathname) ||
   location.pathname.startsWith('/dashboard') ||
   location.pathname.startsWith('/note/') ||
   location.pathname.startsWith('/folder/');
@@ -83,6 +84,7 @@ function App() {
         <Route path="/note/:id/edit" element={<EditNote />} />
         <Route path="/notes" element={<AllNotes />} />
 
+        <Route path="/timer" element={<StudyTimer />} />
 
       </Routes>
     </div>
