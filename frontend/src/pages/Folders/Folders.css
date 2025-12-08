@@ -1,15 +1,310 @@
-/* Reuse your Dashboard.css styles or import them */
-@import '../../components/Dashboard/Dashboard.css';
-
-.folder-input {
-  padding: 10px 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  min-width: 200px;
+/* Header with subtitle */
+.folders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  margin-top: -2rem;
 }
 
-.folder-input:focus {
+.folders-header h1 {
+  margin: 0 0 4px 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.folders-subtitle {
+  margin: 0;
+  font-size: 15px;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Folders Grid */
+.folders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.no-folders {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 16px;
+  padding: 60px 20px;
+}
+
+/* Modern Folder Card - Matches Image 2 */
+.folder-card-modern {
+  background-color: #ffffff;
+  padding: 32px 28px 24px;
+  border-radius: 16px;
+  border: 1px solid #e8e8ec;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.folder-card-modern:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: #d4d4d8;
+}
+
+/* Folder Icon - Smaller, cleaner */
+.folder-icon-modern {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+/* Folder Name */
+.folder-name-modern {
+  font-size: 19px;
+  margin: 0;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+/* Footer - Matches Image 2 layout */
+.folder-footer-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.folder-note-count-modern {
+  background: transparent;
+  color: #8b5cf6;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.folder-date-modern {
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* Three Dots Menu - Hidden by default */
+.folder-menu-btn {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #9ca3af;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.folder-card-modern:hover .folder-menu-btn {
+  opacity: 1;
+}
+
+.folder-menu-btn:hover {
+  background: #f5f3ff;
+  color: #8b5cf6;
+}
+
+/* Dropdown Menu */
+.folder-menu {
+  position: absolute;
+  right: 16px;
+  top: 40px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 4px 0;
+  z-index: 20;
+  min-width: 120px;
+  border: 1px solid #e8e8ec;
+}
+
+.folder-menu button {
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #444;
+  transition: background 0.15s ease;
+}
+
+.folder-menu button:hover {
+  background: #f5f3ff;
+  color: #8b5cf6;
+}
+
+/* Modal styles remain the same */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e6e6ea;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2f3237;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-close:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-body input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.modal-body input:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #9b57ff;
+  box-shadow: 0 0 0 3px rgba(155, 87, 255, 0.1);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px;
+}
+
+.btn-cancel,
+.btn-create {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-cancel {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.btn-cancel:hover {
+  background: #e6e6e6;
+}
+
+.btn-create {
+  background: #9b57ff;
+  color: white;
+  box-shadow: 0 2px 8px rgba(155, 87, 255, 0.3);
+}
+
+.btn-create:hover {
+  background: #8849e0;
+  box-shadow: 0 4px 12px rgba(155, 87, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-create:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .folders-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  
+  .folders-header {
+    flex-direction: column;
+    gap: 20px;
+  }
 }

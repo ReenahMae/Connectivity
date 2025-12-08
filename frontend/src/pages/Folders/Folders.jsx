@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Folder, FolderPlus } from "lucide-react";
 import { folderApi } from "../../api/folderApi";
 import { activityApi } from "../../api/activityApi";
 import "../../components/Dashboard/Dashboard.css";
-import "./FoldersModal.css"; 
+import "./Folders.css";
+import Sidebar from "../../components/Sidebar/Sidebar";
 
 const Folders = () => {
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
-  
-  // State for the "Three Dots" menu
   const [openMenuId, setOpenMenuId] = useState(null);
 
   useEffect(() => {
@@ -31,32 +32,27 @@ const Folders = () => {
     }
   };
 
- const handleCreateFolder = async () => {
+  const handleCreateFolder = async () => {
     if (!newFolderName.trim()) return;
 
     try {
-      // 1. Create Folder
       const newFolder = {
         folderName: newFolderName,
         dateCreated: new Date().toISOString().split("T")[0],
       };
       await folderApi.createFolder(newFolder);
 
-      // 2. Refresh UI
       setShowModal(false);
       setNewFolderName("");
       fetchFolders();
 
-      // 3. AUTOMATIC LOG (Safe Block)
       try {
         await activityApi.createLog({
-            activityType: `Created folder: ${newFolderName}`
-            // No timestamp sent here; let Java handle it to avoid date errors
+          activityType: `Created folder: ${newFolderName}`
         });
       } catch (logErr) {
         console.warn("Tracking failed", logErr);
       }
-
     } catch (err) {
       alert("Failed to create folder");
     }
@@ -67,7 +63,7 @@ const Folders = () => {
     try {
       await folderApi.deleteFolder(id);
       setFolders(folders.filter((f) => f.folderId !== id));
-      setOpenMenuId(null); 
+      setOpenMenuId(null);
     } catch (err) {
       alert("Failed to delete folder");
     }
@@ -80,101 +76,92 @@ const Folders = () => {
     navigate("/login", { replace: true });
   };
 
-  const getUserData = () => {
-    const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : { fname: "User", email: "user@email.com" };
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleCreateFolder();
+    }
   };
 
   return (
     <div className="dashboard-layout">
-      {/* --- SIDEBAR (Matches Dashboard.js) --- */}
-      <aside className="sidebar">
-        <div className="sidebar-top">
-          <div className="sidebar-logo">📚</div>
-          <div className="sidebar-title">Connectivity</div>
-        </div>
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={() => setCollapsed(!collapsed)}
+        activeRoute="/folders"
+        user={user}
+        onLogout={handleLogout}
+      />
 
-        <nav className="sidebar-nav">
-          <button className="nav-item" onClick={() => navigate("/dashboard")}>
-            📄 <span>My Notes</span>
-          </button>
-          <button className="nav-item active">
-            📁 <span>My Folders</span>
-          </button>
-          <button className="nav-item" onClick={() => navigate("/activity")}>🕘 <span>Activity Log</span></button>
-          <button className="nav-item">🔗 <span>Shared with me</span></button>
-          <button className="nav-item">🏷️ <span>AI Tags</span></button>
-          <button className="nav-item" onClick={() => navigate("/settings")}>
-            ⚙️ <span>Settings</span>
-          </button>
-        </nav>
-
-        <div className="sidebar-bottom">
-          <div className="user-pill">
-            <div className="user-initials">{getUserData().fname[0]}</div>
-            <div className="user-info">
-              <div className="user-name">{getUserData().fname}</div>
-              <div className="user-email">{getUserData().email}</div>
+      <main className={`content ${collapsed ? 'collapsed' : ''}`}>
+        <div className="dashboard-inner">
+          <header className="folders-header">
+            <div>
+              <h1>My Folders</h1>
+              <p className="folders-subtitle">Organize your notes into folders</p>
             </div>
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
-        </div>
-      </aside>
 
-      {/* --- MAIN CONTENT --- */}
-      <main className="dashboard-inner content">
-        <header className="dashboard-header">
-          <div>
-            <h1>My Folders</h1>
-            <span className="note-count">{folders.length} folders total</span>
-          </div>
+            <button className="new-note-btn" onClick={() => setShowModal(true)}>
+              <FolderPlus size={20} />
+              New Folder
+            </button>
+          </header>
 
-          <button className="new-note-btn" onClick={() => setShowModal(true)}>
-            + New Folder
-          </button>
-        </header>
-
-        <section className="notes-grid">
-          {loading ? (
-            <p style={{ color: "#666" }}>Loading folders...</p>
-          ) : folders.length === 0 ? (
-            <p style={{ color: "#666" }}>No folders yet.</p>
-          ) : (
-            folders.map((folder) => (
-              <article
-                key={folder.folderId}
-                className="note-card"
-                role="button"
-                onClick={() => navigate(`/folder/${folder.folderId}`)}
-                style={{ cursor: "pointer" }}
-              >
-                <div className="note-icon">📁</div>
-                
-                {/* Three Dots Menu Button */}
-                <div
-                  className="note-menu-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenMenuId(openMenuId === folder.folderId ? null : folder.folderId);
-                  }}
+          <section className="folders-grid">
+            {loading ? (
+              <p className="no-folders">Loading folders...</p>
+            ) : folders.length === 0 ? (
+              <p className="no-folders">No folders yet. Create your first folder!</p>
+            ) : (
+              folders.map((folder) => (
+                <article
+                  key={folder.folderId}
+                  className="folder-card-modern"
+                  onClick={() => navigate(`/folder/${folder.folderId}`)}
                 >
-                  ⋮
-                </div>
-
-                {/* Dropdown Menu */}
-                {openMenuId === folder.folderId && (
-                  <div className="note-menu" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => navigate(`/folder/${folder.folderId}`)}>Open</button>
-                    <button onClick={() => handleDeleteFolder(folder.folderId)}>Delete</button>
+                  {/* Three Dots Menu - Shows on hover */}
+                  <div
+                    className="folder-menu-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === folder.folderId ? null : folder.folderId);
+                    }}
+                  >
+                    ⋮
                   </div>
-                )}
 
-                <h3>{folder.folderName}</h3>
-                <p className="modified">Created: {folder.dateCreated}</p>
-              </article>
-            ))
-          )}
-        </section>
+                  {openMenuId === folder.folderId && (
+                    <div className="folder-menu" onClick={(e) => e.stopPropagation()}>
+                      <button onClick={() => navigate(`/folder/${folder.folderId}`)}>
+                        Open
+                      </button>
+                      <button onClick={() => handleDeleteFolder(folder.folderId)}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Folder Icon */}
+                  <div className="folder-icon-modern">
+                    <Folder size={30} color="#8b5cf6" strokeWidth={2} />
+                  </div>
+
+                  {/* Folder Name */}
+                  <h3 className="folder-name-modern">{folder.folderName}</h3>
+
+                  {/* Footer Info */}
+                  <div className="folder-footer-modern">
+                    <span className="folder-note-count-modern">
+                      {folder.noteCount || 0} notes
+                    </span>
+                    <span className="folder-date-modern">Created {folder.dateCreated}</span>
+                  </div>
+                </article>
+              ))
+            )}
+          </section>
+        </div>
       </main>
 
       {/* --- CREATE FOLDER MODAL --- */}
@@ -183,20 +170,27 @@ const Folders = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>Create New Folder</h2>
-              <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
+              <button className="modal-close" onClick={() => setShowModal(false)}>
+                ×
+              </button>
             </div>
             <div className="modal-body">
               <input
                 type="text"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
-                placeholder="Folder Name..."
+                onKeyPress={handleKeyPress}
+                placeholder="Enter folder name"
                 autoFocus
               />
             </div>
             <div className="modal-footer">
-              <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="btn-create" onClick={handleCreateFolder}>Create</button>
+              <button className="btn-cancel" onClick={() => setShowModal(false)}>
+                Cancel
+              </button>
+              <button className="btn-create" onClick={handleCreateFolder}>
+                Create
+              </button>
             </div>
           </div>
         </div>

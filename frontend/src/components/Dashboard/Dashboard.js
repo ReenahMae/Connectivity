@@ -1,20 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Plus, MoreVertical, FileText } from 'lucide-react';
 import "./Dashboard.css";
-import { getNotes, createNote } from "../../api/NotesApi";
-import { deleteNoteApi } from "../../api/NotesApi";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import { getNotes, createNote, deleteNoteApi } from "../../api/NotesApi";
+
+// Helper function to format date nicely
+const formatModifiedDate = (dateString) => {
+  if (!dateString) return "Unknown";
+  
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return "just now";
+    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch (e) {
+    return dateString;
+  }
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
+  const [notes, setNotes] = useState([]);
+  const [openMenuId, setOpenMenuId] = useState(null);
 
-  // --- AUTH PROTECTION ---
+  // AUTH PROTECTION
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login", { replace: true }); // redirect if not logged in
+      navigate("/login", { replace: true });
     }
 
-    // Optional: prevent back button from showing cached page after logout
     window.history.pushState(null, "", window.location.href);
     window.onpopstate = () => {
       if (!localStorage.getItem("token")) {
@@ -23,159 +49,124 @@ const Dashboard = () => {
     };
   }, [navigate]);
 
-  // --- NOTES STATE ---
-  const [notes, setNotes] = useState([]);
+  // LOAD NOTES
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) return;
 
+    getNotes(user.id)
+      .then(setNotes)
+      .catch(err => console.error("Error loading notes:", err));
+  }, []);
 
-useEffect(() => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) return;
+  // ADD NEW NOTE
+  const addNewNote = async () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user?.id || user?.userId;
+    if (!userId) {
+      alert('Please login again (missing user id)');
+      return;
+    }
 
-  getNotes(user.id)
-    .then(setNotes)
-    .catch(err => console.error("Error loading notes:", err));
-}, []);
+    try {
+      const saved = await createNote({ userId, title: "", body: "" });
+      navigate(`/note/${saved.id}/edit`);
+    } catch (err) {
+      console.error("Error creating note:", err);
+      alert("Failed to create note.");
+    }
+  };
 
-
-
-  // --- ADD NEW NOTE ---
-const addNewNote = async () => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const userId = user?.id || user?.userId;
-  if (!userId) { alert('Please login again (missing user id)'); return; }
-
-  try {
-    const saved = await createNote({ userId, title: "", body: "" });
-    // your createNote should return saved note object
-    navigate(`/note/${saved.id}/edit`);
-  } catch (err) {
-    console.error("Error creating note:", err);
-    alert("Failed to create note.");
-  }
-};
-
-
-  // --- LOGOUT ---
+  // LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.removeItem("session"); // if you still use this
+    localStorage.removeItem("session");
     navigate("/login", { replace: true });
   };
 
-  // --- NOTE MENU ---
-  const [openMenuId, setOpenMenuId] = useState(null);
+  // DELETE NOTE
+  const handleDeleteCard = (id) => {
+    if (!window.confirm("Delete this note?")) return;
 
+    const user = JSON.parse(localStorage.getItem("user"));
 
+    deleteNoteApi(id, user.id)
+      .then(() => {
+        setNotes(notes.filter(n => n.id !== id));
+        setOpenMenuId(null);
+      })
+      .catch(err => console.error("Delete failed:", err));
+  };
 
-const handleDeleteCard = (id) => {
-  if (!window.confirm("Delete this note?")) return;
-
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  deleteNoteApi(id, user.id)
-    .then(() => {
-      setNotes(notes.filter(n => n.id !== id));
-      setOpenMenuId(null);
-    })
-    .catch(err => console.error("Delete failed:", err));
-};
-
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   return (
     <div className="dashboard-layout">
-      <aside className="sidebar">
-        <div className="sidebar-top">
-          <div className="sidebar-logo">📚</div>
-          <div className="sidebar-title">Connectivity</div>
-        </div>
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={() => setCollapsed(!collapsed)}
+        activeRoute="/dashboard"
+        user={user}
+        onLogout={handleLogout}
+      />
 
-        <nav className="sidebar-nav">
-          <button className="nav-item active">📄 <span>My Notes</span></button>
-          <button className="nav-item"onClick={() => navigate("/folders")}> 📁 <span>My Folders</span></button>
-          <button className="nav-item" onClick={() => navigate("/activity")}>🕘 <span>Activity Log</span></button>
-          <button className="nav-item">🔗 <span>Shared with me</span></button>
-          <button className="nav-item">🏷️ <span>AI Tags</span></button>
-          <button
-            className="nav-item"
-            onClick={() => navigate("/settings")}
-            aria-label="Settings"
-          >
-            🏷️ <span>Settings</span>
-          </button>
-        </nav>
-
-        <div className="sidebar-bottom">
-          <div className="user-pill">
-            <div className="user-initials">
-              {localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).fname[0] : "U"}
+      <main className={`content ${collapsed ? 'collapsed' : ''}`}>
+        <div className="dashboard-inner">
+          <header className="dashboard-header">
+            <div>
+              <h1>All Notes</h1>
+              <span className="note-count">{notes.length} notes total</span>
             </div>
-            <div className="user-info">
-              <div className="user-name">
-                {localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).fname : "User"}
-              </div>
-              <div className="user-email">
-                {localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).email : "user@email.com"}
-              </div>
-            </div>
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      </aside>
 
-      {/* --- CONTENT --- */}
-      <main className="dashboard-inner content">
-        <header className="dashboard-header">
-          <div>
-            <h1>All Notes</h1>
-            <span className="note-count">{notes.length} notes total</span>
-          </div>
+            <button className="new-note-btn" onClick={addNewNote}>
+              <Plus size={20} />
+              <span>New Note</span>
+            </button>
+          </header>
 
-          <button className="new-note-btn" onClick={addNewNote}>
-            + New Note
-          </button>
-        </header>
-
-        <section className="notes-grid">
-          {notes.map((note) => (
-            <article
-              key={note.id}
-              className="note-card"
-              role="button"
-              onClick={() => navigate(`/note/${note.id}`)}
-            >
-              <div className="note-icon" aria-hidden="true">📄</div>
-              <div
-                className="note-menu-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenMenuId(openMenuId === note.id ? null : note.id);
-                }}
+          <section className="notes-grid">
+            {notes.map((note) => (
+              <article
+                key={note.id}
+                className="note-card"
+                role="button"
+                onClick={() => navigate(`/note/${note.id}`)}
               >
-                ⋮
-              </div>
-
-              {openMenuId === note.id && (
-                <div
-                  className="note-menu"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button onClick={() => navigate(`/note/${note.id}`)}>Open</button>
-                  <button onClick={() => navigate(`/note/${note.id}/edit`)}>Edit</button>
-                  <button onClick={() => handleDeleteCard(note.id)}>Delete</button>
+                <div className="note-icon-wrapper">
+                  <FileText className="note-icon" size={30} />
                 </div>
-              )}
 
-              <h3>{note.title || "Untitled Note"}</h3>
-              <p className="note-body">
-                {note.body ? note.body.slice(0, 120) : "Empty note…"}
-              </p>
-              <p className="modified">Last modified {note.modified}</p>
-            </article>
-          ))}
-        </section>
+                <button
+                  className="note-menu-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMenuId(openMenuId === note.id ? null : note.id);
+                  }}
+                >
+                  <MoreVertical size={20} />
+                </button>
+
+                {openMenuId === note.id && (
+                  <div
+                    className="note-menu"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button onClick={() => navigate(`/note/${note.id}`)}>Open</button>
+                    <button onClick={() => navigate(`/note/${note.id}/edit`)}>Edit</button>
+                    <button onClick={() => handleDeleteCard(note.id)}>Delete</button>
+                  </div>
+                )}
+
+                <h3>{note.title || "Untitled Note"}</h3>
+                <p className="note-body">
+                  {note.body ? note.body.slice(0, 80) : "Empty note…"}
+                </p>
+                <p className="modified">Last modified {formatModifiedDate(note.modified)}</p>
+              </article>
+            ))}
+          </section>
+        </div>
       </main>
     </div>
   );
