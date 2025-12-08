@@ -34,7 +34,9 @@ const formatModifiedDate = (dateString) => {
 
 const AllNotes = () => {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    return localStorage.getItem("sidebarCollapsed") === "true";
+  });
   const [notes, setNotes] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
 
@@ -74,6 +76,12 @@ const AllNotes = () => {
     navigate("/login", { replace: true });
   };
 
+  const handleToggleSidebar = () => {
+    const newCollapsed = !collapsed;
+    setCollapsed(newCollapsed);
+    localStorage.setItem("sidebarCollapsed", newCollapsed);
+  };
+
   const deleteNote = async (id) => {
     if (!window.confirm("Delete this note?")) return;
 
@@ -95,7 +103,7 @@ const AllNotes = () => {
     <div className="allnotes-layout">
       <Sidebar
         collapsed={collapsed}
-        onToggle={() => setCollapsed(!collapsed)}
+        onToggle={handleToggleSidebar}
         activeRoute="/notes"
         user={user}
         onLogout={handleLogout}
@@ -124,7 +132,7 @@ const AllNotes = () => {
                 onClick={() => navigate(`/note/${note.id}`)}
               >
                 <div className="note-icon-wrapper">
-                  <FileText size={30} className="note-icon" />
+                  <FileText size={28} className="note-icon" />
                 </div>
 
                 <button

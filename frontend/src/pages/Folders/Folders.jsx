@@ -9,7 +9,9 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 
 const Folders = () => {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    return localStorage.getItem("sidebarCollapsed") === "true";
+  });
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -76,6 +78,12 @@ const Folders = () => {
     navigate("/login", { replace: true });
   };
 
+  const handleToggleSidebar = () => {
+    const newCollapsed = !collapsed;
+    setCollapsed(newCollapsed);
+    localStorage.setItem("sidebarCollapsed", newCollapsed);
+  };
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const handleKeyPress = (e) => {
@@ -88,7 +96,7 @@ const Folders = () => {
     <div className="dashboard-layout">
       <Sidebar
         collapsed={collapsed}
-        onToggle={() => setCollapsed(!collapsed)}
+        onToggle={handleToggleSidebar}
         activeRoute="/folders"
         user={user}
         onLogout={handleLogout}
