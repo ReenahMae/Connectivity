@@ -7,7 +7,7 @@ const Sidebar = ({ collapsed, onToggle, activeRoute, user, onLogout }) => {
   const navigate = useNavigate();
 
   const navigationLinks = [
-    { to: '/dashboard', label: 'My Notes', icon: FileText },
+    { to: '/notes', label: 'My Notes', icon: FileText },
     { to: '/folders', label: 'My Folders', icon: Folder },
     { to: '/activity', label: 'Activity Log', icon: Clock },
     { to: '/shared', label: 'Shared with me', icon: Share2 },

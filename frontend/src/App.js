@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import './App.css';
 import './Landing.css';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/LandingPage/Navbar';
 import Hero from './components/LandingPage/Hero';
 import Features from './components/LandingPage/Features';
 import About from './components/LandingPage/About';
 import Login from './components/Login/login';
 import Register from './components/Register/register';
-import Dashboard from './components/Dashboard/Dashboard';
 import Settings from './components/Settings/Settings';
 import HowItWorks from './components/LandingPage/HowItWorks';
 import WhyChoose from './components/LandingPage/WhyChoose';
@@ -19,6 +18,7 @@ import EditNote from './components/Notes/EditNote';
 import Folders from './pages/Folders/Folders';
 import FolderView from './pages/Folders/FolderView';
 import ActivityLog from './pages/ActivityLog/ActivityLog';
+import AllNotes from './components/Notes/AllNotes';
 
 // Simple landing wrapper used as the home route
 function LandingPage() {
@@ -40,7 +40,7 @@ function LandingPage() {
 function App() {
   const location = useLocation();
   const hideNavbar =
-  ['/login', '/register', '/settings', '/folders','/activity'].includes(location.pathname) ||
+  ['/login', '/register', '/settings', '/folders','/activity','/notes'].includes(location.pathname) ||
   location.pathname.startsWith('/dashboard') ||
   location.pathname.startsWith('/note/') ||
   location.pathname.startsWith('/folder/');
@@ -74,13 +74,15 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Navigate to="/notes" replace />} />
         <Route path="/folders" element={<Folders />} />
         <Route path="/folder/:folderId" element={<FolderView />} />
         <Route path="/activity" element={<ActivityLog />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/note/:id" element={<ViewNote />} />
         <Route path="/note/:id/edit" element={<EditNote />} />
+        <Route path="/notes" element={<AllNotes />} />
+
 
       </Routes>
     </div>
