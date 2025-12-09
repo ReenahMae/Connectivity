@@ -7,7 +7,9 @@ import AboutSection from "./AboutSection";
 
 const StudyTimer = () => {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    return localStorage.getItem("sidebarCollapsed") === "true";
+  });
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -175,8 +177,12 @@ const StudyTimer = () => {
     <div className="dashboard-layout">
       <Sidebar
         collapsed={collapsed}
-        onToggle={() => setCollapsed(!collapsed)}
-        activeRoute="/study-timer"
+        onToggle={() => {
+          const newCollapsed = !collapsed;
+          setCollapsed(newCollapsed);
+          localStorage.setItem("sidebarCollapsed", newCollapsed);
+        }}
+        activeRoute="/timer"
         user={user}
         onLogout={() => {
           localStorage.clear();

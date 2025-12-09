@@ -210,6 +210,15 @@
   color: #6d4aff;
 }
 
+.note-menu button.delete-menu-item {
+  color: #d32f2f;
+}
+
+.note-menu button.delete-menu-item:hover {
+  background: #ffe0e0;
+  color: #d32f2f;
+}
+
 /* Responsive */
 @media (max-width: 800px) {
   .content {

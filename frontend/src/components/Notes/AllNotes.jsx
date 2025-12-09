@@ -147,9 +147,9 @@ const AllNotes = () => {
 
                 {openMenuId === note.id && (
                   <div className="note-menu" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => navigate(`/note/${note.id}`)}>Open</button>
+                    <button onClick={(e) => { e.stopPropagation(); }}>Share</button>
                     <button onClick={() => navigate(`/note/${note.id}/edit`)}>Edit</button>
-                    <button onClick={() => deleteNote(note.id)}>Delete</button>
+                    <button className="delete-menu-item" onClick={() => deleteNote(note.id)}>Delete</button>
                   </div>
                 )}
 

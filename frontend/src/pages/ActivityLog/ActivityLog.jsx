@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { activityApi } from "../../api/activityApi";
+import Sidebar from "../../components/Sidebar/Sidebar";
 
-// ✅ Reuse standard Dashboard styles
+// Reuse standard Dashboard styles
 import "../../components/Dashboard/Dashboard.css";
-// ✅ Reuse Folder Modal styles
+// Reuse Folder Modal styles
 import "../Folders/FoldersModal.css"; 
+// NEW: Import activity-specific styles
+import "./ActivityLog.css";
 
 const ActivityLog = () => {
   const navigate = useNavigate();
+  
+  // Sidebar State
+  const [collapsed, setCollapsed] = useState(() => {
+    return localStorage.getItem("sidebarCollapsed") === "true";
+  });
   
   // Data State
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Modal States
-  const [showModal, setShowModal] = useState(false); // For Create/Edit
-  const [viewLog, setViewLog] = useState(null);      // For Viewing Details (New!)
+  const [showModal, setShowModal] = useState(false);
+  const [viewLog, setViewLog] = useState(null);
   
   const [inputText, setInputText] = useState("");
   const [editingId, setEditingId] = useState(null); 
@@ -70,13 +78,12 @@ const ActivityLog = () => {
 
   // --- DELETE ---
   const handleDelete = async (logId, e) => {
-    e.stopPropagation(); // Don't trigger the view modal
+    e.stopPropagation();
     if (!window.confirm("Delete this entry?")) return;
 
     try {
       await activityApi.deleteLog(logId);
       setLogs(logs.filter(log => log.logId !== logId));
-      // If we deleted the log currently being viewed, close the modal
       if (viewLog && viewLog.logId === logId) {
         setViewLog(null);
       }
@@ -93,37 +100,157 @@ const ActivityLog = () => {
   };
 
   const openEditModal = (log, e) => {
-      e.stopPropagation(); // Don't trigger the view modal
+      e.stopPropagation();
       setEditingId(log.logId);
       setInputText(log.activityType);
       setShowModal(true);
   };
 
-  // ✅ NEW: Open the View Modal
   const openViewModal = (log) => {
       setViewLog(log);
   };
 
-  // --- UTILS ---
-  const getIcon = (text = "") => {
+  // --- ENHANCED CATEGORIZATION (EXACT UI MATCH WITH REAL ICONS) ---
+  const categorizeActivity = (text = "") => {
     const lower = text.toLowerCase();
-    if (lower.includes("create")) return "✨";
-    if (lower.includes("delete")) return "🗑️";
-    if (lower.includes("update") || lower.includes("edit")) return "📝";
-    return "🔹";
+    
+    // Edited note - purple icon
+    if (lower.includes("edit") && lower.includes("note")) {
+      return { 
+        action: "Edited note", 
+        iconType: "edit", 
+        bgColor: "#f3e9ff", 
+        iconColor: "#7c3aed" 
+      };
+    }
+    
+    // Created folder - purple folder icon
+    if (lower.includes("create") && lower.includes("folder")) {
+      return { 
+        action: "Created folder", 
+        iconType: "folder", 
+        bgColor: "#f3e9ff", 
+        iconColor: "#8b5cf6" 
+      };
+    }
+    
+    // Created note - plus icon
+    if (lower.includes("create") && lower.includes("note")) {
+      return { 
+        action: "Created note", 
+        iconType: "plus", 
+        bgColor: "#f3e9ff", 
+        iconColor: "#8b5cf6" 
+      };
+    }
+    
+    // Deleted note - red trash icon
+    if (lower.includes("delete") && lower.includes("note")) {
+      return { 
+        action: "Deleted note", 
+        iconType: "trash", 
+        bgColor: "#f3e9ff", 
+        iconColor: "#7c3aed" 
+      };
+    }
+    
+    // Default fallback
+    return { 
+      action: "Activity", 
+      iconType: "circle", 
+      bgColor: "#f3e9ff", 
+      iconColor: "#8b5cf6" 
+    };
+  };
+
+  // Render icon based on type
+  const renderIcon = (iconType) => {
+    switch(iconType) {
+      case "edit":
+        return (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        );
+      case "folder":
+        return (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+        );
+      case "plus":
+        return (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        );
+      case "trash":
+        return (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        );
+      default:
+        return (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="8"></circle>
+          </svg>
+        );
+    }
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return "Just now";
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "Just now";
-    return date.toLocaleDateString() + " at " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const now = new Date();
+    const diffMs = now - date;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffHours < 1) return "Just now";
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays === 1) return "1 day ago";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  // Extract content after the action description
+  const extractContent = (text = "") => {
+    // Remove the action prefix and return the rest
+    const patterns = [
+      /edited\s+note\s*[-:]\s*(.+)/i,
+      /created\s+folder\s*[-:]\s*(.+)/i,
+      /created\s+note\s*[-:]\s*(.+)/i,
+      /deleted\s+note\s*[-:]\s*(.+)/i,
+      /[-:]\s*(.+)/,
+    ];
+    
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+    
+    return text;
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login", { replace: true });
+  };
+
+  const handleToggleSidebar = () => {
+    const newCollapsed = !collapsed;
+    setCollapsed(newCollapsed);
+    localStorage.setItem("sidebarCollapsed", newCollapsed);
   };
 
   const getUserData = () => {
@@ -133,128 +260,81 @@ const ActivityLog = () => {
 
   return (
     <div className="dashboard-layout">
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <div className="sidebar-top">
-          <div className="sidebar-logo">📚</div>
-          <div className="sidebar-title">Connectivity</div>
-        </div>
-         <nav className="sidebar-nav">
-          <button className="nav-item" onClick={() => navigate("/dashboard")}>
-            📄 <span>My Notes</span>
-          </button>
-          <button className="nav-item " onClick={() => navigate("/folders")}>
-            📁 <span>My Folders</span>
-          </button>
-          <button className="nav-item active" onClick={() => navigate("/activity")}>🕘 <span>Activity Log</span></button>
-          <button className="nav-item">🔗 <span>Shared with me</span></button>
-          <button className="nav-item">🏷️ <span>AI Tags</span></button>
-          <button className="nav-item" onClick={() => navigate("/settings")}>
-            ⚙️ <span>Settings</span>
-          </button>
-        </nav>
-        <div className="sidebar-bottom">
-          <div className="user-pill">
-            <div className="user-initials">{getUserData().fname[0]}</div>
-            <div className="user-info">
-              <div className="user-name">{getUserData().fname}</div>
-              <div className="user-email">{getUserData().email}</div>
-            </div>
-          </div>
-           <button className="logout-btn" onClick={handleLogout}>Logout</button>
-        </div>
-      </aside>
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={handleToggleSidebar}
+        activeRoute="/activity"
+        user={getUserData()}
+        onLogout={handleLogout}
+      />
 
       {/* MAIN CONTENT */}
-      <main className="dashboard-inner content">
-        <header className="dashboard-header">
+      <main className={`dashboard-inner content ${collapsed ? 'collapsed' : ''}`}>
+        <header className="dashboard-header" style={{ marginBottom: '8px' }}>
           <div>
-            <h1>Activity Log</h1>
-            <span className="note-count">{logs.length} Entries</span>
+            <h1 style={{ marginBottom: '4px' }}>Activity Log</h1>
+            <p style={{ color: '#6b7280', fontSize: '14px', margin: '0', fontWeight: '400' }}>
+              Track all your recent activities and changes
+            </p>
           </div>
           <button className="new-note-btn" onClick={openCreateModal}>
             + Log Activity
           </button>
         </header>
 
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        <div className="activity-container">
           {loading ? (
-             <div style={{ textAlign: "center", padding: "40px", color: "#666" }}>Loading history...</div>
+            <div className="loading-text">Loading history...</div>
           ) : logs.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+            <div className="empty-state">
+              <div style={{ fontSize: '48px', opacity: 0.3 }}>📋</div>
               <p>No activity recorded yet.</p>
+              <p style={{ fontSize: '14px', color: '#999' }}>
+                Your recent actions will appear here
+              </p>
             </div>
           ) : (
-            logs.map((log) => (
-              <article 
-                key={log.logId} 
-                className="note-card"
-                // ✅ ADDED: Click handler to open View Modal
-                onClick={() => openViewModal(log)}
-                style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between',
-                    minHeight: 'auto', 
-                    padding: '16px 24px',
-                    cursor: 'pointer', // Shows it's clickable
-                    transition: 'transform 0.1s',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div style={{
-                        width: '42px', height: '42px', 
-                        background: '#f3e9ff', color: '#6f2bdc', 
-                        borderRadius: '50%', display: 'flex', 
-                        alignItems: 'center', justifyContent: 'center', fontSize: '20px'
-                    }}>
-                        {getIcon(log.activityType)}
+            <div className="log-list-container">
+              {logs.map((log) => {
+                const { action, iconType, bgColor, iconColor } = categorizeActivity(log.activityType);
+                const content = extractContent(log.activityType);
+                
+                return (
+                  <div 
+                    key={log.logId} 
+                    className="log-item"
+                    onClick={() => openViewModal(log)}
+                  >
+                    <div 
+                      className="log-icon-wrapper" 
+                      style={{ background: bgColor, color: iconColor }}
+                    >
+                      {renderIcon(iconType)}
                     </div>
                     
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '600' }}>
-                            {log.activityType}
-                        </h3>
-                        <p className="modified" style={{ margin: 0 }}>
-                            {formatDate(log.timestamp)}
-                        </p>
+                    <div className="log-content">
+                      <div className="log-title">
+                        {action}
+                      </div>
+                      <div className="log-subtitle">
+                        {content}
+                      </div>
                     </div>
-                </div>
 
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    {/* EDIT BUTTON */}
-                    <button 
-                        onClick={(e) => openEditModal(log, e)}
-                        style={{
-                            background: 'none', border: 'none', 
-                            color: '#007bff', fontSize: '18px', 
-                            cursor: 'pointer', padding: '4px'
-                        }}
-                        title="Edit Entry"
-                    >
-                        ✎
-                    </button>
-                    {/* DELETE BUTTON */}
-                    <button 
-                        onClick={(e) => handleDelete(log.logId, e)}
-                        style={{
-                            background: 'none', border: 'none', 
-                            color: '#dc3545', fontSize: '24px', 
-                            cursor: 'pointer', padding: '0 4px',
-                            lineHeight: '1'
-                        }}
-                        title="Delete Entry"
-                    >
-                        ×
-                    </button>
-                </div>
-              </article>
-            ))
+                    <div className="log-actions">
+                      <span className="log-date">
+                        {formatDate(log.timestamp)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
-        </section>
+        </div>
       </main>
 
-      {/* --- CREATE / EDIT MODAL --- */}
+      {/* CREATE / EDIT MODAL */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -268,11 +348,14 @@ const ActivityLog = () => {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Create Note - 01/01/2001 at 01:01 AM"
+                placeholder="e.g., Edited note - Meeting Notes"
                 autoFocus
                 style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '15px', boxSizing: 'border-box' }}
                 onKeyPress={(e) => e.key === "Enter" && handleSave()}
               />
+              <p style={{ fontSize: '12px', color: '#888', marginTop: '8px' }}>
+                Examples: "Edited note - Photosynthesis Summary", "Created folder - Science Notes"
+              </p>
             </div>
             <div className="modal-footer">
               <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancel</button>
@@ -284,7 +367,7 @@ const ActivityLog = () => {
         </div>
       )}
 
-      {/* --- ✅ NEW: VIEW DETAILS MODAL --- */}
+      {/* VIEW DETAILS MODAL */}
       {viewLog && (
         <div className="modal-overlay" onClick={() => setViewLog(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -317,7 +400,6 @@ const ActivityLog = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
