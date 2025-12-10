@@ -31,7 +31,7 @@ protected void doFilterInternal(HttpServletRequest request,
     String path = request.getRequestURI();
 
     // Skip public endpoints
-    if (path.startsWith("/api/auth") || path.startsWith("/api/notes") || path.startsWith("/api/profile") || path.startsWith("/api/timer")) {
+    if (path.startsWith("/api/auth") || path.startsWith("/api/notes") || path.startsWith("/api/profile") || path.startsWith("/api/folders") ||  path.startsWith("/api/activity") || path.startsWith("/api/timer")) {
         filterChain.doFilter(request, response);
         return;
     }

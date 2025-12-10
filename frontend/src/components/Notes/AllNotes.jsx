@@ -4,6 +4,8 @@ import { Plus, MoreVertical, FileText } from "lucide-react";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { getNotes, createNote, deleteNoteApi } from "../../api/NotesApi";
 import "./AllNotes.css";
+import { activityApi } from "../../api/activityApi";
+import { activityTracker } from "../../pages/ActivityLog/activityTracker";
 
 // Format date helper
 const formatModifiedDate = (dateString) => {
@@ -57,18 +59,8 @@ const AllNotes = () => {
   }, []);
 
   // CREATE NOTE
-  const addNewNote = async () => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const userId = user?.id;
-
-    if (!userId) return alert("Missing user ID, please login again.");
-
-    try {
-      const saved = await createNote({ userId, title: "", body: "" });
-      navigate(`/note/${saved.id}/edit`);
-    } catch (err) {
-      console.error("Error creating note:", err);
-    }
+const addNewNote = () => {
+    navigate("/note/new"); 
   };
 
   const handleLogout = () => {
@@ -83,19 +75,31 @@ const AllNotes = () => {
   };
 
   const deleteNote = async (id) => {
-    if (!window.confirm("Delete this note?")) return;
+  if (!window.confirm("Delete this note?")) return;
 
-    const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
+  
+  const noteToDelete = notes.find((n) => n.id === id);
+  const noteTitle = noteToDelete?.title || "Untitled Note";
 
+  try {
+    await deleteNoteApi(id, user.id);
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+    setOpenMenuId(null);
+    await activityTracker.logNoteDeleted(noteTitle);
     try {
-      await deleteNoteApi(id, user.id);
-      setNotes((prev) => prev.filter((n) => n.id !== id));
-    } catch (err) {
-      console.error("Delete failed:", err);
+      await activityApi.createLog({
+        activityType: `Deleted note: ${noteTitle}`
+      });
+    } catch (logErr) {
+      console.warn("Manual tracking failed", logErr);
     }
 
-    setOpenMenuId(null);
-  };
+  } catch (err) {
+    console.error("Delete failed:", err);
+    alert("Failed to delete note");
+  }
+};
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -154,9 +158,10 @@ const AllNotes = () => {
                 )}
 
                 <h3>{note.title || "Untitled Note"}</h3>
-                <p className="note-body">
-                  {note.body ? note.body.slice(0, 80) : "Empty note…"}
-                </p>
+                <div 
+                    className="note-body"
+                    dangerouslySetInnerHTML={{ __html: note.body || "Empty note…" }}
+                  />
                 <p className="modified">Last modified {formatModifiedDate(note.modified)}</p>
               </article>
             ))}

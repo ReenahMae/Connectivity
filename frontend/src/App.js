@@ -80,6 +80,7 @@ function App() {
         <Route path="/folder/:folderId" element={<FolderView />} />
         <Route path="/activity" element={<ActivityLog />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/note/new" element={<EditNote />} />
         <Route path="/note/:id" element={<ViewNote />} />
         <Route path="/note/:id/edit" element={<EditNote />} />
         <Route path="/notes" element={<AllNotes />} />
