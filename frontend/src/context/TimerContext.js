@@ -15,6 +15,9 @@ export function TimerProvider({ children }) {
   const intervalRef = useRef(null);
   const lastUpdatedMinuteRef = useRef(null);
 
+  const [showFloatingTimer, setShowFloatingTimer] = useState(false);
+
+
   // When timer reaches 0
   const handleTimerComplete = () => {
     setIsRunning(false);
@@ -73,7 +76,9 @@ export function TimerProvider({ children }) {
         focusTime, setFocusTime,
         longBreaks, setLongBreaks,
 
-        intervalRef, lastUpdatedMinuteRef
+        intervalRef, lastUpdatedMinuteRef,
+        showFloatingTimer, setShowFloatingTimer,
+
       }}
     >
       {children}

@@ -13,16 +13,19 @@ const FloatingTimer = () => {
     setTimeLeft,
     intervalRef,
     setBreakType,
+    showFloatingTimer,
+    setShowFloatingTimer,
   } = useContext(TimerContext);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [visible, setVisible] = React.useState(true);
+  // Hide on pages where floating timer should not appear
+  const hideOnPages = ["/login", "/register", "/timer", "/settings", "/"];
+  if (hideOnPages.includes(location.pathname)) return null;
 
-  // Hide on full timer page & settings
-  if (location.pathname === "/timer" || location.pathname === "/settings") return null;
-  if (!visible) return null;
+  // If user didn't start timer → floating timer stays hidden
+  if (!showFloatingTimer) return null;
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -38,8 +41,8 @@ const FloatingTimer = () => {
   };
 
   const closeTimer = () => {
-    setIsRunning(false);
-    setVisible(false);
+    setIsRunning(false);          // stop timer when closing
+    setShowFloatingTimer(false);  // hide popup
   };
 
   return (
@@ -51,10 +54,10 @@ const FloatingTimer = () => {
         </div>
 
         <div className="ft-right">
-          <Maximize2 
-            size={18} 
-            className="ft-header-btn" 
-            onClick={() => navigate("/timer")} 
+          <Maximize2
+            size={18}
+            className="ft-header-btn"
+            onClick={() => navigate("/timer")}
           />
           <X size={18} className="ft-header-btn" onClick={closeTimer} />
         </div>
@@ -65,7 +68,9 @@ const FloatingTimer = () => {
       <div className="ft-progress">
         <div
           className="ft-progress-fill"
-          style={{ width: `${(timeLeft / (25 * 60)) * 100}%` }}
+          style={{
+            width: `${(timeLeft / (25 * 60)) * 100}%`,
+          }}
         ></div>
       </div>
 

@@ -30,7 +30,8 @@ const {
   longBreaks,
   setLongBreaks,
   intervalRef,
-  lastUpdatedMinuteRef
+  lastUpdatedMinuteRef,
+  setShowFloatingTimer 
 } = useContext(TimerContext);
 
 
@@ -228,9 +229,14 @@ const {
                 <RotateCcw className="reset-icon" />
               </button>
 
-              <button className="play-btn" onClick={() => setIsRunning(!isRunning)}>
+              <button className="play-btn" onClick={() => {
+                setIsRunning(!isRunning);
+                setShowFloatingTimer(true);  // <-- this works now
+}}>
+
                 {isRunning ? <Pause className="play-icon" /> : <Play className="play-icon" />}
-              </button>
+                </button>
+
             </div>
           </div>
 

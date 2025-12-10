@@ -21,7 +21,10 @@ import ActivityLog from './pages/ActivityLog/ActivityLog';
 import AllNotes from './components/Notes/AllNotes';
 import StudyTimer from './components/StudyTimer/StudyTimer';
 import FloatingTimer from "./components/StudyTimer/FloatingTimer";
-
+import AiTagsPage from "./components/AiTags/AiTagsPage";
+import { useContext } from "react";
+import { TimerContext } from "./context/TimerContext";
+import AiTagsWrapper from './components/AiTags/AiTagsWrapper';
 // Simple landing wrapper used as the home route
 function LandingPage() {
   return (
@@ -42,11 +45,12 @@ function LandingPage() {
 function App() {
   const location = useLocation();
   const hideNavbar =
-  ['/login', '/register', '/settings', '/folders','/activity','/notes', '/timer',].includes(location.pathname) ||
+  ['/login', '/register', '/settings', '/folders','/activity','/notes', '/timer', '/tags'].includes(location.pathname) ||
   location.pathname.startsWith('/dashboard') ||
   location.pathname.startsWith('/note/') ||
   location.pathname.startsWith('/folder/');
-
+  const hideFloatingTimer =
+  ["/", "/login", "/register", "/settings", "/timer"].includes(location.pathname);
   // Scroll to an element when the URL contains a hash (e.g. /#why-choose)
   useEffect(() => {
     if (location.hash) {
@@ -68,10 +72,11 @@ function App() {
       }, 60);
     }
   }, [location]);
+const { showFloatingTimer } = useContext(TimerContext);
 
   return (
     <div className="App landing-page">
-      <FloatingTimer />
+      {showFloatingTimer && <FloatingTimer />}
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -88,6 +93,8 @@ function App() {
         <Route path="/notes" element={<AllNotes />} />
 
         <Route path="/timer" element={<StudyTimer />} />
+        {/* <Route path="/tags" element={<AiTagsPage />} /> */}
+        <Route path="/tags" element={<AiTagsWrapper />} />
 
       </Routes>
     </div>
