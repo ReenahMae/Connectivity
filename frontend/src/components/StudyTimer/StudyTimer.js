@@ -249,8 +249,11 @@ const {
 
             <div className="stats-card">
               <Timer className="stats-icon orange" />
-              <div className="stats-value">{longBreaks}</div>
-              <div className="stats-label">Until Long Break</div>
+              <div className="stats-value">
+              {4 - (sessionsToday % 4)}
+              </div>
+            <div className="stats-label">Until Long Break</div>
+
             </div>
 
             <div className="stats-card">

@@ -6,28 +6,28 @@ const AboutSection = ({ selectedMode }) => {
   const aboutData = {
     pomodoro: {
       title: "About Pomodoro Technique",
-      focus: { label: "Focus Duration", value: "25 minutes of deep work" },
+      focus: { label: "Focus Duration", value: "25 minutes of focus" },
       shortBreak: { label: "Short Break", value: "5 minutes to recharge" },
       longBreak: { label: "Long Break", value: "15 minutes after 4 sessions" },
     },
 
     deepWork: {
       title: "About Deep Work Technique",
-      focus: { label: "Focus Duration", value: "90 minutes of deep work" },
+      focus: { label: "Focus Duration", value: "90 minutes of focus" },
       shortBreak: { label: "Short Break", value: "20 minutes to recharge" },
       longBreak: { label: "Long Break", value: "30 minutes after 2 sessions" },
     },
 
     shortBurst: {
       title: "About Short Burst Technique",
-      focus: { label: "Focus Duration", value: "15 minutes of deep work" },
+      focus: { label: "Focus Duration", value: "15 minutes of focus" },
       shortBreak: { label: "Short Break", value: "3 minutes to recharge" },
       longBreak: { label: "Long Break", value: "10 minutes after 6 sessions" },
     },
 
     extendedFocus: {
       title: "About Extended Focus Technique",
-      focus: { label: "Focus Duration", value: "50 minutes of deep work" },
+      focus: { label: "Focus Duration", value: "50 minutes of focus" },
       shortBreak: { label: "Short Break", value: "10 minutes to recharge" },
       longBreak: { label: "Long Break", value: "25 minutes after 3 sessions" },
     },
