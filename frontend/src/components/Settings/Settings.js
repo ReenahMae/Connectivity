@@ -5,11 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button/Button';
 import ProfileSettings from './ProfileSettings';
 import { ThemeContext } from '../../context/ThemeContext';
+import Sidebar from '../Sidebar/Sidebar';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
   const [activeTab, setActiveTab] = useState('profile');
+  const [collapsed, setCollapsed] = useState(() => {
+    return localStorage.getItem("sidebarCollapsed") === "true";
+  });
 
   // Sidebar reads user info from localStorage and listens for updates
   const [storedUser, setStoredUser] = useState(() => JSON.parse(localStorage.getItem('user') || '{}'));
@@ -28,36 +32,23 @@ const Settings = () => {
     navigate('/login');
   };
 
+  const handleToggleSidebar = () => {
+    const newCollapsed = !collapsed;
+    setCollapsed(newCollapsed);
+    localStorage.setItem("sidebarCollapsed", newCollapsed);
+  };
+
   return (
     <div className="dashboard-layout">
-      <aside className="sidebar">
-        <div className="sidebar-top">
-          <div className="sidebar-logo">📚</div>
-          <div className="sidebar-title">Connectivity</div>
-        </div>
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={handleToggleSidebar}
+        activeRoute="/settings"
+        user={storedUser}
+        onLogout={handleLogout}
+      />
 
-        <nav className="sidebar-nav">
-          <button className="nav-item" onClick={() => navigate('/dashboard')}>📄 <span>My Notes</span></button>
-          <button className="nav-item">📁 <span>My Folders</span></button>
-          <button className="nav-item">🕘 <span>Activity Log</span></button>
-          <button className="nav-item">🔗 <span>Shared with me</span></button>
-          <button className="nav-item">🏷️ <span>AI Tags</span></button>
-          <button className="nav-item" onClick={() => navigate('/settings')}>⚙️ <span>Settings</span></button>
-        </nav>
-
-          <div className="sidebar-bottom">
-          <div className="user-pill">
-            <div className="user-initials">{(storedUser.fname?.[0] || '') + (storedUser.lname?.[0] || '')}</div>
-            <div className="user-info">
-              <div className="user-name">{storedUser.fname || ''} {storedUser.lname || ''}</div>
-              <div className="user-email">{storedUser.email || ''}</div>
-            </div>
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
-        </div>
-      </aside>
-
-      <main className="dashboard-inner content">
+      <main className={`dashboard-inner content ${collapsed ? 'collapsed' : ''}`}>
         <div className="settings-page">
           <header className="settings-header">
             <div className="settings-title-wrap">

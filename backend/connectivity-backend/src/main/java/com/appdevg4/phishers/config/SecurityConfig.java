@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/profile/**").permitAll()
                 .requestMatchers("/api/folders/**").permitAll()
                 .requestMatchers("/api/activity/**").permitAll()
+                .requestMatchers("/api/timer/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .formLogin().disable()

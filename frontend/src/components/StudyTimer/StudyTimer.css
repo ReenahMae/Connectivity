@@ -1,0 +1,272 @@
+.study-timer-container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #f3e8ff, #dbeafe);
+  padding: 2rem;
+}
+
+.study-timer-wrapper {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.study-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.study-header-icon {
+  width: 40px;
+  height: 40px;
+  background: #7c3aed;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-white {
+  color: white;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.study-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+  padding: 20px;
+  border-radius: 20px;
+
+  width: 260px;
+  height: 150px;
+
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.mode-btn.active-mode {
+  border: 2px solid #9b5de5;
+  background: #f5efff;
+}
+
+.mode-btn:hover {
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.mode-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.mode-label {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.mode-time {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.timer-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 40px 20px;
+  margin: 25px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.break-selector {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.break-btn {
+  border: 1px solid rgba(0, 0, 0, 0.08); 
+  background: #ffffff;
+  border-radius: 25px;
+  padding: 10px 22px;
+  transition: 0.2s ease-in-out;
+}
+
+.break-btn.active-break {
+  background: #8b3dff;
+  color: white;
+  border: none;
+}
+
+.break-btn:hover {
+  background: #e5e7eb;
+}
+
+.break-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.25rem;
+}
+
+.timer-display {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.timer-text {
+  font-size: 7rem;
+  font-weight: bold;
+  color: #7c3aed;
+}
+
+.timer-sub {
+  font-size: 1.2rem;
+  color: #6b7280;
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.reset-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f5f7; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08); 
+  transition: 0.2s ease;
+}
+
+.reset-btn:hover {
+  background: #ececec;
+}
+
+.reset-icon {
+  width: 28px;
+  height: 28px;
+  color: #555;
+}
+
+.play-btn {
+  width: 90px;
+  height: 90px;
+  background: #7c3aed;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-btn:hover {
+  background: #6d28d9;
+}
+
+.play-icon {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stats-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px 10px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.stats-icon {
+  width: 2rem;
+  height: 2rem;
+  margin: auto;
+  margin-bottom: 0.5rem;
+}
+
+.stats-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.stats-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.purple {
+  color: #7c3aed;
+}
+
+.teal {
+  color: #0d9488;
+}
+
+.orange {
+  color: #ea580c;
+}
+
+.icon-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+}
+
+.orange-bg {
+  background-color: #fde7c4;
+  color: #f97316;
+}
+
+.violet-bg {
+  background-color: #e9d5ff;
+  color: #8b5cf6;
+}
+
+.green-bg {
+  background-color: #d1fae5;
+  color: #10b981;
+}
+
+.blue-bg {
+  background-color: #dbeafe;
+  color: #3b82f6;
+}

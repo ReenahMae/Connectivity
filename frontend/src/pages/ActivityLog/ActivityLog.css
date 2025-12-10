@@ -1,17 +1,17 @@
-/* Container for the list */
+/* Container for the activity list */
 .activity-container {
-    max-width: 900px; /* Limits width so it doesn't stretch too far */
-    margin-top: 20px;
+    max-width: 1000px;
+    margin-top: 32px;
 }
 
 /* Empty State Card */
 .empty-state {
     background: white;
-    border: 1px dashed #ccc; /* Dashed border suggests "fill me" */
+    border: 1px dashed #d1d5db;
     border-radius: 12px;
     padding: 60px 20px;
     text-align: center;
-    color: #6a6e73;
+    color: #6b7280;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,81 +27,134 @@
 .loading-text {
     text-align: center;
     margin-top: 40px;
-    color: #666;
+    color: #6b7280;
     font-size: 16px;
 }
 
-/* --- List Items (The Cards) --- */
-.log-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+/* --- List Container & Items --- */
+.log-list-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .log-item {
     background: white;
-    padding: 16px 20px;
+    padding: 20px 24px;
     border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border: 1px solid #e6e6ea;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
     gap: 16px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .log-item:hover {
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #d1d5db;
 }
 
+/* Icon wrapper - matches the inspiration exactly */
 .log-icon-wrapper {
-    width: 40px;
-    height: 40px;
-    background: #f3e9ff;
-    color: #6f2bdc;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     flex-shrink: 0;
 }
 
+/* Content area */
 .log-content {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    gap: 4px;
+    min-width: 0;
 }
 
 .log-title {
     font-weight: 600;
-    color: #2f3237;
+    color: #111827;
     font-size: 15px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.log-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Actions area (timestamp) */
+.log-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
 }
 
 .log-date {
     font-size: 13px;
-    color: #888;
-    margin-top: 4px;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+/* Icon buttons */
+.icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    line-height: 1;
+    color: #6b7280;
+}
+
+.icon-btn:hover {
+    background: #f3f4f6;
+    color: #111827;
 }
 
 .delete-log-btn {
     background: transparent;
     border: none;
-    color: #ccc;
+    color: #d1d5db;
     font-size: 24px;
     cursor: pointer;
     line-height: 1;
     padding: 4px 8px;
-    border-radius: 4px;
+    border-radius: 6px;
     transition: all 0.2s;
 }
 
 .delete-log-btn:hover {
-    color: #dc3545;
-    background: #fff5f5;
+    color: #dc2626;
+    background: #fee;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .log-item {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .log-actions {
+        width: 100%;
+        margin-left: 64px;
+        justify-content: flex-start;
+    }
+    
+    .activity-container {
+        margin-top: 20px;
+    }
 }
