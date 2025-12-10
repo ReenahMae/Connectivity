@@ -87,7 +87,6 @@ const Folders = () => {
 
   return (
     <div className="dashboard-layout">
-      {/* --- SIDEBAR (Matches Dashboard.js) --- */}
       <aside className="sidebar">
         <div className="sidebar-top">
           <div className="sidebar-logo">📚</div>
