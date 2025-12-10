@@ -20,6 +20,7 @@ import FolderView from './pages/Folders/FolderView';
 import ActivityLog from './pages/ActivityLog/ActivityLog';
 import AllNotes from './components/Notes/AllNotes';
 import StudyTimer from './components/StudyTimer/StudyTimer';
+import FloatingTimer from "./components/StudyTimer/FloatingTimer";
 
 // Simple landing wrapper used as the home route
 function LandingPage() {
@@ -70,6 +71,7 @@ function App() {
 
   return (
     <div className="App landing-page">
+      <FloatingTimer />
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<LandingPage />} />
