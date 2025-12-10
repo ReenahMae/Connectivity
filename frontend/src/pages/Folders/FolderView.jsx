@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plus,X , FileText } from "lucide-react";
+import { Plus, X, FileText } from "lucide-react";
 import { folderApi } from "../../api/folderApi";
 import { getNotes } from "../../api/NotesApi";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import "../../components/Dashboard/Dashboard.css";
 import "./FolderView.css";
+import { activityApi } from "../../api/activityApi";
 
 const FolderView = () => {
   const navigate = useNavigate();
@@ -28,7 +29,6 @@ const FolderView = () => {
       navigate("/folders");
       return;
     }
-
     fetchFolderAndNotes();
   }, [folderId, navigate]);
 
@@ -40,8 +40,6 @@ const FolderView = () => {
         setFolder(data);
         setEditedName(data.folderName);
       }
-
-      // Fetch notes in this folder
       const notes = await folderApi.getNotesInFolder(folderId);
       setFolderNotes(notes);
     } catch (err) {
@@ -58,10 +56,18 @@ const FolderView = () => {
       alert("Folder name cannot be empty");
       return;
     }
+    const oldName = folder.folderName;
 
     try {
       const updatedFolder = { ...folder, folderName: editedName };
       await folderApi.updateFolder(folderId, updatedFolder);
+      
+      try {
+        await activityApi.createLog({ 
+          activityType: `Renamed folder: "${oldName}" to "${editedName}"` 
+        });
+      } catch (e) { console.warn(e); }
+
       setFolder(updatedFolder);
       setIsEditing(false);
     } catch (err) {
@@ -70,9 +76,17 @@ const FolderView = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this folder? This action cannot be undone.")) return;
+    if (!window.confirm("Are you sure you want to delete this folder?")) return;
+    const folderName = folder.folderName;
+    
     try {
       await folderApi.deleteFolder(folderId);
+      try {
+        await activityApi.createLog({ 
+          activityType: `Deleted folder: ${folderName}` 
+        });
+      } catch (e) { console.warn(e); }
+
       navigate("/folders");
     } catch (err) {
       alert("Failed to delete folder");
@@ -88,7 +102,6 @@ const FolderView = () => {
 
     try {
       const notes = await getNotes(user.id);
-      // Filter out notes that are already in this folder
       const notesNotInFolder = notes.filter(
         note => !note.folderId || note.folderId.toString() !== folderId.toString()
       );
@@ -117,11 +130,17 @@ const FolderView = () => {
     try {
       await folderApi.addNotesToFolder(folderId, selectedNotes);
       
+      // --- FIX: CHANGED LOG FORMAT ---
+      // We use "Added to folder:" as the prefix, so the details appear after it.
+      try {
+        await activityApi.createLog({ 
+          activityType: `Added to folder: ${selectedNotes.length} note(s) added to ${folder.folderName}` 
+        });
+      } catch (e) { console.warn(e); }
+      
       setShowNoteSelector(false);
       setSelectedNotes([]);
       alert(`Successfully added ${selectedNotes.length} note(s) to folder`);
-      
-      // Refresh the folder notes
       await fetchFolderAndNotes();
     } catch (err) {
       console.error("Error adding notes:", err);
@@ -131,10 +150,19 @@ const FolderView = () => {
 
   const handleRemoveNote = async (noteId) => {
     if (!window.confirm("Remove this note from the folder?")) return;
+
+    const noteToRemove = folderNotes.find(n => n.id === noteId);
+    const noteTitle = noteToRemove?.title || "Untitled Note";
     
     try {
       await folderApi.removeNoteFromFolder(folderId, noteId);
-      // Refresh the notes
+      
+      try {
+        await activityApi.createLog({ 
+          activityType: `Removed note: "${noteTitle}" from folder "${folder.folderName}"` 
+        });
+      } catch (e) { console.warn(e); }
+
       await fetchFolderAndNotes();
     } catch (err) {
       console.error("Error removing note:", err);
@@ -142,6 +170,7 @@ const FolderView = () => {
     }
   };
 
+  // ... (Keep the rest of your component exactly the same: logout, toggleSidebar, return statement, etc.)
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -197,14 +226,8 @@ const FolderView = () => {
 
       <main className={`content ${collapsed ? 'collapsed' : ''}`}>
         <div className="folder-view-container">
-          {/* Header Section */}
           <div className="folder-view-header">
-            <button 
-              className="back-button"
-              onClick={() => navigate("/folders")}
-            >
-              ← Back to Folders
-            </button>
+            <button className="back-button" onClick={() => navigate("/folders")}>← Back to Folders</button>
 
             <div className="folder-title-section">
               {isEditing ? (
@@ -224,25 +247,16 @@ const FolderView = () => {
               )}
             </div>
 
-            <button 
-              className="btn-add-note"
-              onClick={handleOpenNoteSelector}
-              title="Add Notes to Folder"
-            >
-              <Plus size={20} />
-              Add Notes
-            </button>
-
-            <button 
-              className="btn-delete-folder" 
-              onClick={handleDelete}
-              title="Delete Folder"
-            >
-              <i className="fas fa-trash"></i>
-            </button>
+            <div className="header-actions">
+                <button className="btn-add-note" onClick={handleOpenNoteSelector} title="Add Notes to Folder">
+                    <Plus size={20} /> Add Notes
+                </button>
+                <button className="btn-delete-folder" onClick={handleDelete} title="Delete Folder">
+                    <i className="fas fa-trash"></i>
+                </button>
+            </div>
           </div>
 
-          {/* Notes Grid */}
           <div className="notes-grid">
             {folderNotes.length === 0 ? (
               <div className="empty-notes-state">
@@ -267,7 +281,18 @@ const FolderView = () => {
                      <FileText size={28} className="note-icon" />
                   </div>
                   <h3>{note.title || "Untitled Note"}</h3>
-                  <p>{note.body ? note.body.slice(0, 100) + '...' : 'Empty note'}</p>
+                  <div 
+                    className="note-body-preview"
+                    dangerouslySetInnerHTML={{ __html: note.body || "Empty note" }}
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      color: '#666',
+                      fontSize: '14px'
+                    }}
+                  />
                   <div className="note-date">
                     {new Date(note.modified).toLocaleDateString()}
                   </div>
@@ -284,19 +309,14 @@ const FolderView = () => {
           <div className="modal-content note-selector-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>Select Notes to Add</h2>
-              <button className="modal-close" onClick={() => setShowNoteSelector(false)}>
-                <X size={24} />
-              </button>
+              <button className="modal-close" onClick={() => setShowNoteSelector(false)}><X size={24} /></button>
             </div>
             
             <div className="modal-body">
-              <p className="note-selector-hint">
-                Selected: {selectedNotes.length} note(s)
-              </p>
-              
+              <p className="note-selector-hint">Selected: {selectedNotes.length} note(s)</p>
               <div className="notes-selection-grid">
                 {availableNotes.length === 0 ? (
-                  <p className="no-notes-message">No available notes to add. All notes are already in this folder or you haven't created any notes yet.</p>
+                  <p className="no-notes-message">No available notes to add.</p>
                 ) : (
                   availableNotes.map((note) => (
                     <div
@@ -304,12 +324,14 @@ const FolderView = () => {
                       className={`selectable-note-card ${selectedNotes.includes(note.id) ? 'selected' : ''}`}
                       onClick={() => toggleNoteSelection(note.id)}
                     >
-                      <div className="note-checkbox">
-                        {selectedNotes.includes(note.id) && '✓'}
-                      </div>
+                      <div className="note-checkbox">{selectedNotes.includes(note.id) && '✓'}</div>
                       <div className="note-info">
                         <h4>{note.title || "Untitled Note"}</h4>
-                        <p>{note.body ? note.body.slice(0, 60) + '...' : 'Empty note'}</p>
+                        <div 
+                          className="note-body-preview-small"
+                          dangerouslySetInnerHTML={{ __html: note.body || "Empty note" }}
+                          style={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontSize: '12px', color: '#888' }}
+                        />
                       </div>
                     </div>
                   ))
@@ -318,20 +340,8 @@ const FolderView = () => {
             </div>
             
             <div className="modal-footer">
-              <button 
-                className="btn-cancel" 
-                onClick={() => {
-                  setShowNoteSelector(false);
-                  setSelectedNotes([]);
-                }}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn-create" 
-                onClick={handleAddNotesToFolder}
-                disabled={selectedNotes.length === 0}
-              >
+              <button className="btn-cancel" onClick={() => { setShowNoteSelector(false); setSelectedNotes([]); }}>Cancel</button>
+              <button className="btn-create" onClick={handleAddNotesToFolder} disabled={selectedNotes.length === 0}>
                 Add {selectedNotes.length > 0 ? `${selectedNotes.length} ` : ''}Note(s)
               </button>
             </div>

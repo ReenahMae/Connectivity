@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import "../Dashboard/Dashboard.css";
 import "./Notes.css";
 import { getNote, deleteNoteApi } from "../../api/NotesApi";
+import { activityTracker } from "../../pages/ActivityLog/activityTracker";
 
 const formatModifiedPH = (dateString) => {
   if (!dateString) return "Unknown";
@@ -68,8 +69,11 @@ const ViewNote = () => {
       return;
     }
 
+     const noteTitle = note.title || "Untitled Note";
+
     try {
       await deleteNoteApi(id, userId);
+      await activityTracker.logNoteDeleted(noteTitle);
       navigate("/notes");
     } catch (err) {
       console.error("Delete failed:", err);
@@ -158,7 +162,10 @@ const ViewNote = () => {
         <h1 className="note-title">{note.title || "Untitled Note"}</h1>
 
         <div className="note-content-box">
-          <div className="note-text">{note.body || "Empty note..."}</div>
+          <div 
+            className="note-text" 
+            dangerouslySetInnerHTML={{ __html: note.body || "Empty note..." }} 
+          />
         </div>
       </div>
     </main>

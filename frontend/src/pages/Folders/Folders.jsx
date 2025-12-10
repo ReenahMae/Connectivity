@@ -6,6 +6,8 @@ import { activityApi } from "../../api/activityApi";
 import "../../components/Dashboard/Dashboard.css";
 import "./Folders.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import { activityTracker } from "../../pages/ActivityLog/activityTracker";
+
 
 const Folders = () => {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ const Folders = () => {
         dateCreated: new Date().toISOString().split("T")[0],
       };
       await folderApi.createFolder(newFolder);
+      await activityTracker.logFolderCreated(newFolderName);
 
       setShowModal(false);
       setNewFolderName("");
@@ -75,6 +78,8 @@ const Folders = () => {
       alert("Folder name cannot be empty");
       return;
     }
+    
+    const oldName = editingFolder.folderName;
 
     try {
       const updatedFolder = {
@@ -82,6 +87,7 @@ const Folders = () => {
         folderName: editedName
       };
       await folderApi.updateFolder(editingFolder.folderId, updatedFolder);
+      await activityTracker.logFolderUpdated(oldName, editedName);
       
       setShowEditModal(false);
       setEditingFolder(null);
@@ -101,15 +107,33 @@ const Folders = () => {
   };
 
   const handleDeleteFolder = async (id) => {
-    if (!window.confirm("Delete this folder?")) return;
+  if (!window.confirm("Delete this folder?")) return;
+
+  const folder = folders.find((f) => f.folderId === id);
+  if (!folder) {
+    alert("Folder not found");
+    return;
+  }
+  const folderName = folder?.folderName || "Unknown Folder";
+  
+  try {
+    await folderApi.deleteFolder(id);
+    setFolders(folders.filter((f) => f.folderId !== id));
+    setOpenMenuId(null);
+    await activityTracker.logFolderDeleted(folderName); 
     try {
-      await folderApi.deleteFolder(id);
-      setFolders(folders.filter((f) => f.folderId !== id));
-      setOpenMenuId(null);
-    } catch (err) {
-      alert("Failed to delete folder");
+      await activityApi.createLog({
+        activityType: `Deleted folder: ${folderName}`
+      });
+    } catch (logErr) {
+      console.warn("Tracking failed", logErr);
     }
-  };
+
+  } catch (err) {
+    console.error("Delete failed", err);
+    alert("Failed to delete folder");
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -203,10 +227,7 @@ const Folders = () => {
                   <h3 className="folder-name-modern">{folder.folderName}</h3>
 
                   {/* Footer Info */}
-                  <div className="folder-footer-modern">
-                    <span className="folder-note-count-modern">
-                      {folder.noteCount || 0} notes
-                    </span>
+                  <div className="folder-footer-modern">  
                     <span className="folder-date-modern">Created {folder.dateCreated}</span>
                   </div>
                 </article>
