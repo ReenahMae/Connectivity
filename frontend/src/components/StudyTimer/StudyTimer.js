@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Clock, Play, Pause, RotateCcw, Timer, Target, Zap, Flame, BookOpen } from "lucide-react";
 import "./StudyTimer.css";
 import Sidebar from "../Sidebar/Sidebar";
 import { useNavigate } from "react-router-dom";
 import AboutSection from "./AboutSection";
+import { TimerContext } from "../../context/TimerContext";
 
 const StudyTimer = () => {
   const navigate = useNavigate();
@@ -13,16 +14,25 @@ const StudyTimer = () => {
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const [selectedMode, setSelectedMode] = useState("pomodoro");
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [sessionsToday, setSessionsToday] = useState(0);
-  const [focusTime, setFocusTime] = useState(0);
-  const [longBreaks, setLongBreaks] = useState(0);
-  const [breakType, setBreakType] = useState("focus");
+const {
+  selectedMode,
+  setSelectedMode,
+  timeLeft,
+  setTimeLeft,
+  isRunning,
+  setIsRunning,
+  breakType,
+  setBreakType,
+  sessionsToday,
+  setSessionsToday,
+  focusTime,
+  setFocusTime,
+  longBreaks,
+  setLongBreaks,
+  intervalRef,
+  lastUpdatedMinuteRef
+} = useContext(TimerContext);
 
-  const intervalRef = useRef(null);
-  const lastUpdatedMinuteRef = useRef(null);
 
   const modes = {
   pomodoro: { 
@@ -84,39 +94,6 @@ const StudyTimer = () => {
       console.error("Failed to save session:", err);
     }
   };
-
-  useEffect(() => {
-    if (isRunning && timeLeft > 0) {
-      intervalRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          const newTime = prev - 1;
-
-          const currentMinute = Math.floor(newTime / 60);
-          if (breakType === "focus") {
-            if (lastUpdatedMinuteRef.current === null) {
-              lastUpdatedMinuteRef.current = currentMinute;
-            }
-            if (currentMinute !== lastUpdatedMinuteRef.current) {
-              setFocusTime((prev) => prev + 1);
-              lastUpdatedMinuteRef.current = currentMinute;
-            }
-          }
-
-          if (newTime <= 0) {
-            handleTimerComplete();
-            return 0;
-          }
-
-          return newTime;
-        });
-      }, 1000);
-    } else {
-      clearInterval(intervalRef.current);
-      lastUpdatedMinuteRef.current = null;
-    }
-
-    return () => clearInterval(intervalRef.current);
-  }, [isRunning, timeLeft, breakType]);
 
   const handleTimerComplete = () => {
     setIsRunning(false);
