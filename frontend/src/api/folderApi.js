@@ -46,5 +46,35 @@ export const folderApi = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+
+  // Add notes to folder
+  addNotesToFolder: async (folderId, noteIds) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${API_BASE_URL}/folders/${folderId}/notes`, 
+      { noteIds },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  },
+
+  // Get notes in folder
+  getNotesInFolder: async (folderId) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${API_BASE_URL}/folders/${folderId}/notes`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Remove note from folder
+  removeNoteFromFolder: async (folderId, noteId) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.delete(
+      `${API_BASE_URL}/folders/${folderId}/notes/${noteId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
   }
 };

@@ -26,6 +26,8 @@ public class NoteEntity {
         this.modified = LocalDateTime.now();
     }
 
+    private Long folderId;
+
     public NoteEntity() {}
 
     public Long getId() { return id; }
@@ -42,4 +44,7 @@ public class NoteEntity {
 
     public LocalDateTime getModified() { return modified; }
     public void setModified(LocalDateTime modified) { this.modified = modified; }
+
+    public Long getFolderId() { return folderId; }
+    public void setFolderId(Long folderId) { this.folderId = folderId;}
 }

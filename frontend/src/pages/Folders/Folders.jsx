@@ -15,7 +15,10 @@ const Folders = () => {
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [editingFolder, setEditingFolder] = useState(null);
+  const [editedName, setEditedName] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
 
   useEffect(() => {
@@ -60,6 +63,43 @@ const Folders = () => {
     }
   };
 
+  const handleEditFolder = (folder) => {
+    setEditingFolder(folder);
+    setEditedName(folder.folderName);
+    setShowEditModal(true);
+    setOpenMenuId(null);
+  };
+
+  const handleUpdateFolder = async () => {
+    if (!editedName.trim()) {
+      alert("Folder name cannot be empty");
+      return;
+    }
+
+    try {
+      const updatedFolder = {
+        ...editingFolder,
+        folderName: editedName
+      };
+      await folderApi.updateFolder(editingFolder.folderId, updatedFolder);
+      
+      setShowEditModal(false);
+      setEditingFolder(null);
+      setEditedName("");
+      fetchFolders();
+
+      try {
+        await activityApi.createLog({
+          activityType: `Renamed folder to: ${editedName}`
+        });
+      } catch (logErr) {
+        console.warn("Tracking failed", logErr);
+      }
+    } catch (err) {
+      alert("Failed to update folder");
+    }
+  };
+
   const handleDeleteFolder = async (id) => {
     if (!window.confirm("Delete this folder?")) return;
     try {
@@ -86,9 +126,13 @@ const Folders = () => {
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e, action) => {
     if (e.key === "Enter") {
-      handleCreateFolder();
+      if (action === "create") {
+        handleCreateFolder();
+      } else if (action === "edit") {
+        handleUpdateFolder();
+      }
     }
   };
 
@@ -128,7 +172,7 @@ const Folders = () => {
                   className="folder-card-modern"
                   onClick={() => navigate(`/folder/${folder.folderId}`)}
                 >
-                  {/* Three Dots Menu - Shows on hover */}
+                  {/* Three Dots Menu */}
                   <div
                     className="folder-menu-btn"
                     onClick={(e) => {
@@ -141,8 +185,8 @@ const Folders = () => {
 
                   {openMenuId === folder.folderId && (
                     <div className="folder-menu" onClick={(e) => e.stopPropagation()}>
-                      <button onClick={() => navigate(`/folder/${folder.folderId}`)}>
-                        Open
+                      <button onClick={() => handleEditFolder(folder)}>
+                        Edit
                       </button>
                       <button onClick={() => handleDeleteFolder(folder.folderId)}>
                         Delete
@@ -172,7 +216,7 @@ const Folders = () => {
         </div>
       </main>
 
-      {/* --- CREATE FOLDER MODAL --- */}
+      {/* CREATE FOLDER MODAL */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -183,11 +227,12 @@ const Folders = () => {
               </button>
             </div>
             <div className="modal-body">
+              <label>Folder Name</label>
               <input
                 type="text"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyPress={(e) => handleKeyPress(e, "create")}
                 placeholder="Enter folder name"
                 autoFocus
               />
@@ -198,6 +243,39 @@ const Folders = () => {
               </button>
               <button className="btn-create" onClick={handleCreateFolder}>
                 Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT FOLDER MODAL */}
+      {showEditModal && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Edit Folder Name</h2>
+              <button className="modal-close" onClick={() => setShowEditModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <label>Folder Name</label>
+              <input
+                type="text"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                onKeyPress={(e) => handleKeyPress(e, "edit")}
+                placeholder="Enter folder name"
+                autoFocus
+              />
+            </div>
+            <div className="modal-footer">
+              <button className="btn-cancel" onClick={() => setShowEditModal(false)}>
+                Cancel
+              </button>
+              <button className="btn-create" onClick={handleUpdateFolder}>
+                Save Changes
               </button>
             </div>
           </div>
